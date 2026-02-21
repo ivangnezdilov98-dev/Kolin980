@@ -203,6 +203,8 @@ class Database:
         except Exception as e:
             print(f"Ошибка обновления статистики: {e}")
     
+    
+    
     # Работа с ожидающими заказами
     def add_pending_order(self, order_id: str, order_data: Dict):
         """Добавить ожидающий заказ"""
@@ -360,6 +362,43 @@ async def apply_referral_reward(user_id: int, purchase_amount: float) -> Dict:
     except Exception as e:
         print(f"Ошибка при применении награды: {e}")
         return {"applied": False, "error": str(e)}
+
+# ==================== МИГРАЦИЯ ДАННЫХ ДЛЯ СТАРЫХ ПОЛЬЗОВАТЕЛЕЙ ====================
+
+async def migrate_existing_users():
+    """Добавляет реферальные коды всем существующим пользователям"""
+    print("🔄 Проверка и миграция данных пользователей...")
+    
+    migrated_count = 0
+    for user_id, user_data in db.users.items():
+        # Проверяем, есть ли реферальный код
+        if 'referral_code' not in user_data or not user_data.get('referral_code'):
+            # Генерируем новый код
+            user_data['referral_code'] = db._generate_referral_code(user_id)
+            migrated_count += 1
+            print(f"  ➕ Добавлен реферальный код для пользователя {user_id}")
+        
+        # Добавляем недостающие поля, если их нет
+        default_fields = {
+            'referred_by': None,
+            'referrals': [],
+            'qualified_referrals': 0,
+            'available_rewards': 0,
+            'used_rewards': 0
+        }
+        
+        for field, default_value in default_fields.items():
+            if field not in user_data:
+                user_data[field] = default_value
+                if field not in ['referred_by', 'referrals']:
+                    print(f"  ➕ Добавлено поле {field} для пользователя {user_id}")
+    
+    if migrated_count > 0:
+        db.save_users_data()
+        print(f"✅ Миграция завершена. Обновлено {migrated_count} пользователей")
+    else:
+        print("✅ Все пользователи уже имеют реферальные коды")
+
 
 async def get_referral_info(user_id: int) -> str:
     """Получает информацию о реферальной программе для пользователя"""
@@ -757,7 +796,7 @@ def categories_kb() -> InlineKeyboardMarkup:
     )
     return builder.as_markup()
 
-def products_kb(category_id: int, page: int = 0, items_per_page: int = 20) -> InlineKeyboardMarkup:
+def products_kb(category_id: int, page: int = 0, items_per_page: int = 10) -> InlineKeyboardMarkup:
     """Товары в категории с пагинацией"""
     builder = InlineKeyboardBuilder()
     products = db.get_products_by_category(category_id)
@@ -3518,6 +3557,11 @@ async def handle_unknown_text(message: Message, state: FSMContext):
                 text="👋 Для навигации используйте кнопки меню:",
                 reply_markup=main_menu_kb(message.from_user.id)
             )
+
+
+# Запускаем миграцию при старте
+async def run_migration():
+    await migrate_existing_users()
 
 # ==================== ЗАПУСК БОТА ====================
 
