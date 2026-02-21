@@ -842,6 +842,45 @@ def products_kb(category_id: int, page: int = 0, items_per_page: int = 10) -> In
     
     return builder.as_markup()
 
+@dp.message(Command("migrate_ref"))
+async def handle_migrate_ref(message: Message):
+    """Команда для принудительной миграции реферальных кодов (только для админов)"""
+    try:
+        if message.from_user.id not in config.ADMIN_IDS:
+            await message.answer("⛔ У вас нет прав администратора")
+            return
+        
+        await message.answer("🔄 Начинаю миграцию данных...")
+        
+        migrated_count = 0
+        for user_id, user_data in db.users.items():
+            if 'referral_code' not in user_data or not user_data.get('referral_code'):
+                user_data['referral_code'] = db._generate_referral_code(user_id)
+                migrated_count += 1
+            
+            # Добавляем все недостающие поля
+            fields_to_add = {
+                'referred_by': None,
+                'referrals': [],
+                'qualified_referrals': 0,
+                'available_rewards': 0,
+                'used_rewards': 0
+            }
+            
+            for field, value in fields_to_add.items():
+                if field not in user_data:
+                    user_data[field] = value
+        
+        if migrated_count > 0:
+            db.save_users_data()
+            await message.answer(f"✅ Миграция завершена. Добавлены реферальные коды для {migrated_count} пользователей")
+        else:
+            await message.answer("✅ Все пользователи уже имеют реферальные коды")
+            
+    except Exception as e:
+        await message.answer(f"❌ Ошибка при миграции: {e}")
+        print(f"Ошибка в migrate_ref: {e}")
+
 def product_detail_kb(product_id: int, category_id: int) -> InlineKeyboardMarkup:
     """Детали товара"""
     builder = InlineKeyboardBuilder()
