@@ -616,6 +616,8 @@ async def send_to_order_channel(order_data: Dict, screenshot_file_id: str = None
     """Отправить заявку на покупку в канал заказов"""
     try:
         print(f"DEBUG: Начинаем отправку в канал заказов...")
+        print(f"DEBUG: order_data: {order_data}")
+        print(f"DEBUG: screenshot_file_id: {screenshot_file_id}")
         
         user_info = order_data.get('username', 'без username')
         user_id = order_data.get('user_id')
@@ -665,6 +667,7 @@ async def send_to_order_channel(order_data: Dict, screenshot_file_id: str = None
         if screenshot_file_id:
             message_text += "\n📸 Прикреплен скриншот оплаты"
         
+        # Сохраняем заказ в БД ДО отправки в канал
         db.add_pending_order(order_id, {
             'user_id': user_id,
             'username': user_info,
@@ -688,29 +691,35 @@ async def send_to_order_channel(order_data: Dict, screenshot_file_id: str = None
         
         keyboard = builder.as_markup()
         
-        if screenshot_file_id:
-            message = await bot.send_photo(
-                chat_id=config.ORDER_CHANNEL_ID,
-                photo=screenshot_file_id,
-                caption=message_text,
-                reply_markup=keyboard
-            )
-        else:
-            message = await bot.send_message(
-                chat_id=config.ORDER_CHANNEL_ID,
-                text=message_text,
-                reply_markup=keyboard
-            )
-        
-        print(f"✅ Заказ успешно отправлен в канал. Message ID: {message.message_id}")
-        return message.message_id
+        try:
+            if screenshot_file_id:
+                message = await bot.send_photo(
+                    chat_id=config.ORDER_CHANNEL_ID,
+                    photo=screenshot_file_id,
+                    caption=message_text,
+                    reply_markup=keyboard
+                )
+            else:
+                message = await bot.send_message(
+                    chat_id=config.ORDER_CHANNEL_ID,
+                    text=message_text,
+                    reply_markup=keyboard
+                )
+            
+            print(f"✅ Заказ успешно отправлен в канал. Message ID: {message.message_id}")
+            return message.message_id
+            
+        except Exception as e:
+            print(f"❌ Ошибка при отправке в канал: {e}")
+            # Удаляем заказ из pending, если не удалось отправить
+            db.remove_pending_order(order_id)
+            return None
         
     except Exception as e:
         print(f"❌ Критическая ошибка в send_to_order_channel: {e}")
         import traceback
         print(f"❌ Трассировка ошибки:\n{traceback.format_exc()}")
         return None
-
 async def send_cart_to_order_channel(order_data: Dict, screenshot_file_id: str = None) -> Optional[int]:
     """Отправить заказ из корзины в канал заказов"""
     try:
@@ -2236,9 +2245,26 @@ async def handle_force_start(callback: CallbackQuery, state: FSMContext):
 async def handle_payment_screenshot(message: Message, state: FSMContext):
     """Обработать полученный скриншот оплаты"""
     try:
+        # Получаем состояние и сразу проверяем, не обработан ли уже этот скриншот
+        current_state = await state.get_state()
+        if current_state != PaymentStates.waiting_for_screenshot.state:
+            return  # Если состояние изменилось, игнорируем сообщение
+        
         file_id = message.photo[-1].file_id
         
         data = await state.get_data()
+        
+        # Проверяем, не был ли уже обработан заказ
+        if data.get('order_processed', False):
+            await message.answer(
+                text="✅ Ваш заказ уже обрабатывается! Пожалуйста, ожидайте.",
+                reply_markup=main_menu_kb(message.from_user.id)
+            )
+            await state.clear()
+            return
+        
+        # Помечаем заказ как обрабатываемый
+        await state.update_data(order_processed=True)
         
         is_cart_order = data.get('is_cart_order', False)
         
@@ -2247,12 +2273,23 @@ async def handle_payment_screenshot(message: Message, state: FSMContext):
         else:
             await _process_single_purchase_screenshot(message, data, file_id)
         
+        # Очищаем состояние после успешной обработки
+        await state.clear()
+        
     except Exception as e:
-        print(f"Ошибка при обработке скриншота: {e}")
-        await message.answer(
-            text="❌ Ошибка при обработке скриншота",
-            reply_markup=main_menu_kb(message.from_user.id)
-        )
+        print(f"❌ Ошибка при обработке скриншота: {e}")
+        import traceback
+        traceback.print_exc()
+        
+        # Проверяем, не было ли уже отправлено сообщение об ошибке
+        try:
+            await message.answer(
+                text="❌ Произошла ошибка при обработке заказа. Пожалуйста, обратитесь к администратору: @koliin98",
+                reply_markup=main_menu_kb(message.from_user.id)
+            )
+        except:
+            pass
+        
         await state.clear()
 
 async def _process_single_purchase_screenshot(message: Message, data: dict, file_id: str):
@@ -2261,12 +2298,38 @@ async def _process_single_purchase_screenshot(message: Message, data: dict, file
         user_id = message.from_user.id
         username = message.from_user.username
         
+        if not username:
+            await message.answer(
+                text="""❌ У вас не установлен username в Telegram!
+
+Для оформления заказа необходимо установить username:
+1. Откройте Настройки Telegram
+2. Выберите "Имя пользователя" (Username)
+3. Установите уникальное имя
+4. Сохраните изменения
+
+После этого повторите заказ.""",
+                reply_markup=main_menu_kb(user_id)
+            )
+            return
+        
         product_id = data.get('product_id')
         product_name = data.get('product_name')
         product_price = data.get('product_price')
         quantity = data.get('quantity', 1)
         total_amount = data.get('total_amount')
         payment_method = data.get('payment_method')
+        
+        # Проверяем, не был ли уже отправлен этот заказ
+        order_key = f"{user_id}_{product_id}_{quantity}_{int(datetime.now().timestamp())}"
+        if hasattr(message.bot, '_processed_orders'):
+            if order_key in message.bot._processed_orders:
+                print(f"⚠️ Заказ {order_key} уже обработан")
+                return
+        else:
+            message.bot._processed_orders = set()
+        
+        message.bot._processed_orders.add(order_key)
         
         order_id = f"ACC_{user_id}_{int(datetime.now().timestamp())}"
         
@@ -2281,22 +2344,20 @@ async def _process_single_purchase_screenshot(message: Message, data: dict, file
             'payment_method': payment_method
         }
         
-        result = await send_to_order_channel(order_data, file_id)
+        # Отправляем в канал с повторной попыткой при ошибке
+        max_retries = 3
+        for attempt in range(max_retries):
+            try:
+                result = await send_to_order_channel(order_data, file_id)
+                if result is not None:
+                    break
+            except Exception as e:
+                print(f"⚠️ Попытка {attempt + 1} отправки в канал не удалась: {e}")
+                if attempt == max_retries - 1:
+                    raise
+                await asyncio.sleep(1)
         
-        if result is None:
-            error_text = """❌ Не удалось отправить заявку.
-
-Возможные причины:
-1. Бот не добавлен в канал заказов
-2. У бота нет прав на отправку сообщений в канал
-3. Технические проблемы с Telegram
-
-Пожалуйста, обратитесь к администратору: @koliin98
-"""
-            await message.answer(text=error_text, reply_markup=main_menu_kb(user_id))
-            await state.clear()  # Очищаем состояние
-            return  # Выходим из функции, не продолжая выполнение
-        
+        # Если успешно отправили
         db.update_user_stats(user_id, total_amount)
         
         user_data = db.get_user(user_id)
@@ -2331,117 +2392,29 @@ async def _process_single_purchase_screenshot(message: Message, data: dict, file
 """
         
         await message.answer(text=success_text, reply_markup=main_menu_kb(user_id))
-        await state.clear()
         
     except Exception as e:
         print(f"❌ Ошибка при обработке скриншота: {e}")
-        # Убираем дублирование - отправляем только одно сообщение об ошибке
-        await message.answer(
-            text="❌ Ошибка при обработке заказа. Обратитесь к администратору.",
-            reply_markup=main_menu_kb(message.from_user.id)
-        )
-        await state.clear()
+        import traceback
+        traceback.print_exc()
+        raise
 
-async def _process_cart_purchase_screenshot(message: Message, data: dict, file_id: str):
-    """Обработать скриншот оплаты для заказа из корзины"""
+@dp.message(PaymentStates.waiting_for_screenshot)
+async def handle_invalid_screenshot(message: Message, state: FSMContext):
+    """Обработка сообщений без фото в состоянии ожидания скриншота"""
     try:
-        user_id = message.from_user.id
-        username = message.from_user.username
-        
-        order_id = data.get('order_id')
-        cart_total = data.get('cart_total')
-        payment_method = data.get('payment_method')
-        
-        if not order_id:
-            order_id = f"CART_{user_id}_{int(datetime.now().timestamp())}"
-        
-        order_data = {
-            'user_id': user_id,
-            'username': username,
-            'order_id': order_id,
-            'cart_total': cart_total,
-            'total': cart_total.get('total_amount', 0),
-            'payment_method': payment_method,
-            'is_cart_order': True
-        }
-        
-        result = await send_cart_to_order_channel(order_data, file_id)
-        
-        if result is None:
-            error_text = """❌ Не удалось отправить заявку.
-
-Возможные причины:
-1. Бот не добавлен в канал заказов
-2. У бота нет прав на отправку сообщений в канал
-3. Технические проблемы с Telegram
-
-Пожалуйста, обратитесь к администратору: @koliin98
-"""
-            await message.answer(text=error_text, reply_markup=main_menu_kb(user_id))
-            await state.clear()  # Очищаем состояние
-            return  # Выходим из функции, не продолжая выполнение
-        
-        total_amount = cart_total.get('total_amount', 0)
-        db.update_user_stats(user_id, total_amount)
-        
-        user_data = db.get_user(user_id)
-        referred_by = user_data.get('referred_by')
-        
-        reward_text = ""
-        if referred_by:
-            await check_referral_qualification(referred_by, total_amount)
-        
-        reward_result = await apply_referral_reward(user_id, total_amount)
-        if reward_result.get('applied'):
-            reward_text = f"\n\n🎁 Применена награда: {reward_result['reward_description']}!\nОсталось наград: {reward_result['remaining_rewards']}"
-        
-        cart_manager.clear_cart(user_id)
-        
-        payment_names = {
-            "sbp": "СБП (Любой банк)",
-            "yoomoney": "ЮMoney",
-            "usdt": "USDT (TRC-20)",
-            "ton": "TON Coin"
-        }
-        payment_name = payment_names.get(payment_method, payment_method)
-        
-        items_text = ""
-        for item in cart_total.get('items', []):
-            emoji = "📱"
-            if "Мьянма" in item['name']:
-                emoji = "🇲🇲"
-            elif "Турция" in item['name']:
-                emoji = "🇹🇷"
-            elif "Инстаграм" in item['name']:
-                emoji = "📸"
-            
-            items_text += f"{emoji} {item['name']} x{item['quantity']} = {item['item_total']:.2f}₽\n"
-        
-        success_text = f"""✅ Заказ из корзины оформлен!
-
-🆔 Номер заказа: {order_id}
-🛒 Состав заказа:
-{items_text}
-📦 Всего аккаунтов: {cart_total.get('total_quantity', 0)} шт.
-💰 Общая сумма: {total_amount:.2f}₽
-💳 Способ оплаты: {payment_name}
-
-📋 Заказ отправлен на обработку.
-Мы свяжемся с вами в ближайшее время для отправки аккаунтов.{reward_text}
-"""
-        
-        await message.answer(text=success_text, reply_markup=main_menu_kb(user_id))
-        await state.clear()
-        
+        current_state = await state.get_state()
+        if current_state == PaymentStates.waiting_for_screenshot.state:
+            await message.answer(
+                text="❌ Пожалуйста, отправьте скриншот оплаты (фото)!\n\n"
+                     "Если хотите отменить заказ, нажмите кнопку ниже:",
+                reply_markup=InlineKeyboardBuilder()
+                    .add(InlineKeyboardButton(text='❌ Отменить заказ', callback_data='main_menu'))
+                    .as_markup()
+            )
     except Exception as e:
-        print(f"❌ Ошибка при обработке скриншота корзины: {e}")
-        # Убираем дублирование - отправляем только одно сообщение об ошибке
-        await message.answer(
-            text="❌ Ошибка при обработке заказа. Обратитесь к администратору.",
-            reply_markup=main_menu_kb(message.from_user.id)
-        )
-        await state.clear()
-
+        print(f"Ошибка при обработке неверного скриншота: {e}")
+        
 # ==================== АДМИН-ПАНЕЛЬ ====================
 
 @dp.callback_query(F.data == 'admin_panel')
