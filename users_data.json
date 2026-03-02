@@ -5,28 +5,52 @@
       "total_spent": 0.0,
       "total_orders": 0,
       "registration_date": "2026-01-08T14:18:17.998122",
-      "last_activity": "2026-01-08T14:18:17.998122"
+      "last_activity": "2026-01-08T14:18:17.998122",
+      "referral_code": "07CE7A6D",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "6769989074": {
       "balance": 0.0,
       "total_spent": 0.0,
       "total_orders": 0,
       "registration_date": "2026-01-12T22:43:09.002800",
-      "last_activity": "2026-01-12T22:43:09.002800"
+      "last_activity": "2026-01-12T22:43:09.002800",
+      "referral_code": "709C3158",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "7754668406": {
       "balance": 0.0,
       "total_spent": 0.0,
       "total_orders": 0,
       "registration_date": "2026-01-12T23:08:59.939388",
-      "last_activity": "2026-01-12T23:08:59.939388"
+      "last_activity": "2026-01-12T23:08:59.939388",
+      "referral_code": "9BB365F8",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "8486556367": {
       "balance": 0.0,
       "total_spent": 0.0,
       "total_orders": 0,
       "registration_date": "2026-01-22T20:52:54.945546",
-      "last_activity": "2026-01-22T20:52:54.945546"
+      "last_activity": "2026-01-22T20:52:54.945546",
+      "referral_code": "9CD216F7",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "5568154436": {
       "balance": 0.0,
@@ -35,199 +59,385 @@
       "registration_date": "2026-01-24T21:08:31.612725",
       "last_activity": "2026-02-11T09:38:11.534001",
       "is_subscribed": true,
-      "subscription_checked_at": "2026-02-21T18:43:26.943868"
+      "subscription_checked_at": "2026-02-21T18:43:26.943868",
+      "referral_code": "7FFA95D8",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "1401808210": {
       "balance": 0.0,
       "total_spent": 0.0,
       "total_orders": 0,
       "registration_date": "2026-01-26T20:39:04.236627",
-      "last_activity": "2026-01-26T20:39:04.236627"
+      "last_activity": "2026-01-26T20:39:04.236627",
+      "referral_code": "EC38C4D3",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "714939895": {
       "balance": 0.0,
       "total_spent": 0.0,
       "total_orders": 0,
       "registration_date": "2026-01-26T20:39:04.246260",
-      "last_activity": "2026-01-26T20:39:04.246260"
+      "last_activity": "2026-01-26T20:39:04.246260",
+      "referral_code": "6081C37A",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "7804367496": {
       "balance": 0.0,
       "total_spent": 0.0,
       "total_orders": 0,
       "registration_date": "2026-01-26T20:39:04.252286",
-      "last_activity": "2026-01-26T20:39:04.252286"
+      "last_activity": "2026-01-26T20:39:04.252286",
+      "referral_code": "79904F93",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "7198196343": {
       "balance": 0.0,
       "total_spent": 0.0,
       "total_orders": 0,
       "registration_date": "2026-01-26T20:39:04.256320",
-      "last_activity": "2026-01-26T20:39:04.256320"
+      "last_activity": "2026-01-26T20:39:04.256320",
+      "referral_code": "977D6CED",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "1126242370": {
       "balance": 0.0,
       "total_spent": 0.0,
       "total_orders": 0,
       "registration_date": "2026-01-30T16:35:01.655938",
-      "last_activity": "2026-01-30T16:35:01.655938"
+      "last_activity": "2026-01-30T16:35:01.655938",
+      "referral_code": "CC4E458F",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "921440123": {
       "balance": 0.0,
       "total_spent": 0.0,
       "total_orders": 0,
       "registration_date": "2026-01-30T16:35:01.661513",
-      "last_activity": "2026-01-30T16:35:01.661513"
+      "last_activity": "2026-01-30T16:35:01.661513",
+      "referral_code": "0016D49E",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "7853820414": {
       "balance": 0.0,
       "total_spent": 0.0,
       "total_orders": 0,
       "registration_date": "2026-01-30T16:35:01.665455",
-      "last_activity": "2026-01-30T16:35:01.665455"
+      "last_activity": "2026-01-30T16:35:01.665455",
+      "referral_code": "311864A2",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "8334697038": {
       "balance": 0.0,
       "total_spent": 0.0,
       "total_orders": 0,
       "registration_date": "2026-01-30T16:35:01.671137",
-      "last_activity": "2026-01-30T16:35:01.671137"
+      "last_activity": "2026-01-30T16:35:01.671137",
+      "referral_code": "44234B42",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "7596818472": {
       "balance": 0.0,
       "total_spent": 0.0,
       "total_orders": 0,
       "registration_date": "2026-01-30T16:35:01.675211",
-      "last_activity": "2026-01-30T16:35:01.675211"
+      "last_activity": "2026-01-30T16:35:01.675211",
+      "referral_code": "C6EA063B",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "1052669994": {
       "balance": 0.0,
       "total_spent": 0.0,
       "total_orders": 0,
       "registration_date": "2026-01-30T16:35:01.679519",
-      "last_activity": "2026-01-30T16:35:01.679519"
+      "last_activity": "2026-01-30T16:35:01.679519",
+      "referral_code": "BC4F69E9",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "7744130200": {
       "balance": 0.0,
       "total_spent": 0.0,
       "total_orders": 0,
       "registration_date": "2026-01-30T16:35:01.683422",
-      "last_activity": "2026-01-30T16:35:01.683422"
+      "last_activity": "2026-01-30T16:35:01.683422",
+      "referral_code": "9D18D1B5",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "5095249068": {
       "balance": 0.0,
       "total_spent": 70.0,
       "total_orders": 1,
       "registration_date": "2026-02-03T00:04:58.682183",
-      "last_activity": "2026-02-10T17:59:46.502993"
+      "last_activity": "2026-02-10T17:59:46.502993",
+      "referral_code": "61483A89",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "5109205251": {
       "total_spent": 0.0,
       "total_orders": 0,
       "registration_date": "2026-02-04T20:26:19.099942",
-      "last_activity": "2026-02-04T20:26:19.099953"
+      "last_activity": "2026-02-04T20:26:19.099953",
+      "referral_code": "3E8AEDDB",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "5300390943": {
       "total_spent": 0.0,
       "total_orders": 0,
       "registration_date": "2026-02-05T06:57:11.631623",
-      "last_activity": "2026-02-05T06:57:11.631634"
+      "last_activity": "2026-02-05T06:57:11.631634",
+      "referral_code": "76765BF0",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "7586017424": {
       "total_spent": 70.0,
       "total_orders": 1,
       "registration_date": "2026-02-05T10:30:15.906946",
-      "last_activity": "2026-02-05T10:35:37.306063"
+      "last_activity": "2026-02-05T10:35:37.306063",
+      "referral_code": "675A9AB4",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "7956929194": {
       "total_spent": 0.0,
       "total_orders": 0,
       "registration_date": "2026-02-05T12:54:32.952350",
-      "last_activity": "2026-02-05T12:54:32.952377"
+      "last_activity": "2026-02-05T12:54:32.952377",
+      "referral_code": "92C5541E",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "6206408584": {
       "total_spent": 0.0,
       "total_orders": 0,
       "registration_date": "2026-02-05T15:57:17.410834",
-      "last_activity": "2026-02-05T15:57:17.410858"
+      "last_activity": "2026-02-05T15:57:17.410858",
+      "referral_code": "FB2AF05D",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "5296619085": {
       "total_spent": 0.0,
       "total_orders": 0,
       "registration_date": "2026-02-05T16:43:51.777951",
-      "last_activity": "2026-02-05T16:43:51.777963"
+      "last_activity": "2026-02-05T16:43:51.777963",
+      "referral_code": "920A57DB",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "7669862384": {
       "total_spent": 0.0,
       "total_orders": 0,
       "registration_date": "2026-02-05T16:51:53.173069",
-      "last_activity": "2026-02-05T16:51:53.173077"
+      "last_activity": "2026-02-05T16:51:53.173077",
+      "referral_code": "C752CA95",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "6046327415": {
       "total_spent": 45.0,
       "total_orders": 1,
       "registration_date": "2026-02-05T18:11:26.524227",
-      "last_activity": "2026-02-05T18:22:20.773215"
+      "last_activity": "2026-02-05T18:22:20.773215",
+      "referral_code": "87025E33",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "6694856007": {
       "total_spent": 0.0,
       "total_orders": 0,
       "registration_date": "2026-02-05T20:12:13.305857",
-      "last_activity": "2026-02-05T20:12:13.305867"
+      "last_activity": "2026-02-05T20:12:13.305867",
+      "referral_code": "4888E23B",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "5094021120": {
       "total_spent": 0.0,
       "total_orders": 0,
       "registration_date": "2026-02-06T02:49:36.978074",
-      "last_activity": "2026-02-06T02:49:36.978085"
+      "last_activity": "2026-02-06T02:49:36.978085",
+      "referral_code": "0A1FB770",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "7848222536": {
       "total_spent": 45.0,
       "total_orders": 1,
       "registration_date": "2026-02-06T09:27:35.723102",
-      "last_activity": "2026-02-06T09:29:56.698701"
+      "last_activity": "2026-02-06T09:29:56.698701",
+      "referral_code": "DF1B37F8",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "1160870033": {
       "total_spent": 70.0,
       "total_orders": 1,
       "registration_date": "2026-02-06T09:55:24.004701",
-      "last_activity": "2026-02-06T09:59:06.119061"
+      "last_activity": "2026-02-06T09:59:06.119061",
+      "referral_code": "81375F93",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "1327381986": {
       "total_spent": 45.0,
       "total_orders": 1,
       "registration_date": "2026-02-06T10:16:05.445927",
-      "last_activity": "2026-02-06T10:21:29.521594"
+      "last_activity": "2026-02-06T10:21:29.521594",
+      "referral_code": "EC512DB5",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "6109144511": {
       "total_spent": 70.0,
       "total_orders": 1,
       "registration_date": "2026-02-07T00:53:37.500091",
-      "last_activity": "2026-02-07T01:05:43.242915"
+      "last_activity": "2026-02-07T01:05:43.242915",
+      "referral_code": "CFDE7223",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "5302078697": {
       "total_spent": 0.0,
       "total_orders": 0,
       "registration_date": "2026-02-07T10:56:15.507022",
-      "last_activity": "2026-02-07T10:56:15.507032"
+      "last_activity": "2026-02-07T10:56:15.507032",
+      "referral_code": "FF9DAEF8",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "6271759974": {
       "total_spent": 45.0,
       "total_orders": 1,
       "registration_date": "2026-02-07T12:07:39.710597",
-      "last_activity": "2026-02-07T18:00:57.060365"
+      "last_activity": "2026-02-07T18:00:57.060365",
+      "referral_code": "A2E9BBFE",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "8341089504": {
       "total_spent": 0.0,
       "total_orders": 0,
       "registration_date": "2026-02-07T14:21:14.855499",
-      "last_activity": "2026-02-07T14:21:14.855509"
+      "last_activity": "2026-02-07T14:21:14.855509",
+      "referral_code": "7CE699CD",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "8236533328": {
       "total_spent": 0.0,
       "total_orders": 0,
       "registration_date": "2026-02-07T14:29:40.118408",
-      "last_activity": "2026-02-07T14:29:40.118417"
+      "last_activity": "2026-02-07T14:29:40.118417",
+      "referral_code": "093632F9",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "8165211611": {
       "total_spent": 70.0,
@@ -235,193 +445,385 @@
       "registration_date": "2026-02-07T15:28:50.529210",
       "last_activity": "2026-02-07T15:38:05.742649",
       "is_subscribed": true,
-      "subscription_checked_at": "2026-02-22T21:53:36.552376"
+      "subscription_checked_at": "2026-02-22T21:53:36.552376",
+      "referral_code": "82710060",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "5787420666": {
       "total_spent": 120.0,
       "total_orders": 1,
       "registration_date": "2026-02-07T18:26:21.053724",
-      "last_activity": "2026-02-07T18:28:36.498819"
+      "last_activity": "2026-02-07T18:28:36.498819",
+      "referral_code": "0F152279",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "1892504320": {
       "total_spent": 225.0,
       "total_orders": 5,
       "registration_date": "2026-02-07T19:14:22.333450",
-      "last_activity": "2026-02-25T12:12:22.735481"
+      "last_activity": "2026-02-25T12:12:22.735481",
+      "referral_code": "D1FCF1A9",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "7944174162": {
       "total_spent": 200.0,
       "total_orders": 1,
       "registration_date": "2026-02-07T19:41:51.909882",
-      "last_activity": "2026-02-07T19:51:01.159604"
+      "last_activity": "2026-02-07T19:51:01.159604",
+      "referral_code": "D069DCE7",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "6502151740": {
       "total_spent": 0.0,
       "total_orders": 0,
       "registration_date": "2026-02-07T20:50:47.047139",
-      "last_activity": "2026-02-07T20:50:47.047156"
+      "last_activity": "2026-02-07T20:50:47.047156",
+      "referral_code": "37F4FF6D",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "8376969060": {
       "total_spent": 0.0,
       "total_orders": 0,
       "registration_date": "2026-02-07T21:33:41.069722",
-      "last_activity": "2026-02-07T21:33:41.069734"
+      "last_activity": "2026-02-07T21:33:41.069734",
+      "referral_code": "64D9D9A9",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "1130146790": {
       "total_spent": 45.0,
       "total_orders": 1,
       "registration_date": "2026-02-08T07:15:33.933933",
-      "last_activity": "2026-02-08T07:22:37.763166"
+      "last_activity": "2026-02-08T07:22:37.763166",
+      "referral_code": "E3156AD7",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "8297396642": {
       "total_spent": 175.0,
       "total_orders": 4,
       "registration_date": "2026-02-08T07:22:36.768066",
-      "last_activity": "2026-02-26T06:23:48.923087"
+      "last_activity": "2026-02-26T06:23:48.923087",
+      "referral_code": "4EFAF712",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "7925903347": {
       "total_spent": 0.0,
       "total_orders": 0,
       "registration_date": "2026-02-08T12:37:39.473054",
-      "last_activity": "2026-02-08T12:37:39.473068"
+      "last_activity": "2026-02-08T12:37:39.473068",
+      "referral_code": "E779DA53",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "985726978": {
       "total_spent": 70.0,
       "total_orders": 1,
       "registration_date": "2026-02-08T12:54:40.568236",
-      "last_activity": "2026-02-08T13:05:41.664303"
+      "last_activity": "2026-02-08T13:05:41.664303",
+      "referral_code": "72B41A32",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "7167913912": {
       "total_spent": 0.0,
       "total_orders": 0,
       "registration_date": "2026-02-08T14:45:18.684312",
-      "last_activity": "2026-02-08T14:45:18.684324"
+      "last_activity": "2026-02-08T14:45:18.684324",
+      "referral_code": "52151988",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "5127252674": {
       "total_spent": 320.0,
       "total_orders": 1,
       "registration_date": "2026-02-08T16:33:09.245351",
-      "last_activity": "2026-02-08T16:37:07.322658"
+      "last_activity": "2026-02-08T16:37:07.322658",
+      "referral_code": "23306AF4",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "5288563567": {
       "total_spent": 0.0,
       "total_orders": 0,
       "registration_date": "2026-02-08T18:05:02.014776",
-      "last_activity": "2026-02-08T18:05:02.014802"
+      "last_activity": "2026-02-08T18:05:02.014802",
+      "referral_code": "553C28E1",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "6926763810": {
       "total_spent": 0.0,
       "total_orders": 0,
       "registration_date": "2026-02-08T21:57:00.257180",
-      "last_activity": "2026-02-08T21:57:00.257198"
+      "last_activity": "2026-02-08T21:57:00.257198",
+      "referral_code": "9570F6D2",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "8495886282": {
       "total_spent": 0.0,
       "total_orders": 0,
       "registration_date": "2026-02-08T23:04:59.308596",
-      "last_activity": "2026-02-08T23:04:59.308609"
+      "last_activity": "2026-02-08T23:04:59.308609",
+      "referral_code": "33A8C1D7",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "8415295104": {
       "total_spent": 0.0,
       "total_orders": 0,
       "registration_date": "2026-02-09T11:17:59.674886",
-      "last_activity": "2026-02-09T11:17:59.674905"
+      "last_activity": "2026-02-09T11:17:59.674905",
+      "referral_code": "06BD36E8",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "1176057643": {
       "total_spent": 0.0,
       "total_orders": 0,
       "registration_date": "2026-02-09T12:00:41.621163",
-      "last_activity": "2026-02-09T12:00:41.621174"
+      "last_activity": "2026-02-09T12:00:41.621174",
+      "referral_code": "DFB74273",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "7688168497": {
       "total_spent": 165.0,
       "total_orders": 2,
       "registration_date": "2026-02-09T13:56:36.416993",
-      "last_activity": "2026-02-24T16:06:20.166154"
+      "last_activity": "2026-02-24T16:06:20.166154",
+      "referral_code": "90D782B0",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "8402694536": {
       "total_spent": 0.0,
       "total_orders": 0,
       "registration_date": "2026-02-09T15:05:52.798983",
-      "last_activity": "2026-02-09T15:05:52.798994"
+      "last_activity": "2026-02-09T15:05:52.798994",
+      "referral_code": "798B32D4",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "7964131551": {
       "total_spent": 0.0,
       "total_orders": 0,
       "registration_date": "2026-02-09T15:06:24.827227",
-      "last_activity": "2026-02-09T15:06:24.827233"
+      "last_activity": "2026-02-09T15:06:24.827233",
+      "referral_code": "2CDD8C21",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "1900997935": {
       "total_spent": 0.0,
       "total_orders": 0,
       "registration_date": "2026-02-09T15:44:53.317889",
-      "last_activity": "2026-02-09T15:44:53.317897"
+      "last_activity": "2026-02-09T15:44:53.317897",
+      "referral_code": "E0950A43",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "7700428998": {
       "total_spent": 0.0,
       "total_orders": 0,
       "registration_date": "2026-02-09T16:26:07.942250",
-      "last_activity": "2026-02-09T16:26:07.942261"
+      "last_activity": "2026-02-09T16:26:07.942261",
+      "referral_code": "DB4BCC47",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "1059097209": {
       "total_spent": 55.0,
       "total_orders": 1,
       "registration_date": "2026-02-09T21:34:48.668516",
-      "last_activity": "2026-02-09T21:42:18.001139"
+      "last_activity": "2026-02-09T21:42:18.001139",
+      "referral_code": "8B6CBAB7",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "6449762772": {
       "total_spent": 30.0,
       "total_orders": 1,
       "registration_date": "2026-02-09T22:33:42.813981",
-      "last_activity": "2026-02-09T22:37:50.057339"
+      "last_activity": "2026-02-09T22:37:50.057339",
+      "referral_code": "A480CC4E",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "7232901967": {
       "total_spent": 0.0,
       "total_orders": 0,
       "registration_date": "2026-02-10T05:04:05.779305",
-      "last_activity": "2026-02-10T05:04:05.779327"
+      "last_activity": "2026-02-10T05:04:05.779327",
+      "referral_code": "8570AE87",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "1321825646": {
       "total_spent": 0.0,
       "total_orders": 0,
       "registration_date": "2026-02-10T08:40:25.810465",
-      "last_activity": "2026-02-10T08:40:25.810476"
+      "last_activity": "2026-02-10T08:40:25.810476",
+      "referral_code": "A9E4AA7C",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "390607023": {
       "total_spent": 0.0,
       "total_orders": 0,
       "registration_date": "2026-02-10T10:31:16.690642",
-      "last_activity": "2026-02-10T10:31:16.690654"
+      "last_activity": "2026-02-10T10:31:16.690654",
+      "referral_code": "0F58130E",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "7788454269": {
       "total_spent": 0.0,
       "total_orders": 0,
       "registration_date": "2026-02-10T13:56:38.581799",
-      "last_activity": "2026-02-10T13:56:38.581815"
+      "last_activity": "2026-02-10T13:56:38.581815",
+      "referral_code": "2D23BA48",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "556769460": {
       "total_spent": 150.0,
       "total_orders": 1,
       "registration_date": "2026-02-11T01:45:53.061307",
-      "last_activity": "2026-02-11T01:56:18.249217"
+      "last_activity": "2026-02-11T01:56:18.249217",
+      "referral_code": "8E4CE848",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "8271745753": {
       "total_spent": 200.0,
       "total_orders": 1,
       "registration_date": "2026-02-11T01:49:11.590291",
-      "last_activity": "2026-02-11T07:32:11.628283"
+      "last_activity": "2026-02-11T07:32:11.628283",
+      "referral_code": "2FB05D87",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "1888635669": {
       "total_spent": 100.0,
       "total_orders": 2,
       "registration_date": "2026-02-11T05:34:46.986231",
-      "last_activity": "2026-02-19T10:15:30.076425"
+      "last_activity": "2026-02-19T10:15:30.076425",
+      "referral_code": "C273CBBC",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "1223111969": {
       "total_spent": 70.0,
       "total_orders": 1,
       "registration_date": "2026-02-11T07:25:18.156658",
-      "last_activity": "2026-02-11T07:26:45.067344"
+      "last_activity": "2026-02-11T07:26:45.067344",
+      "referral_code": "ADCE2DCE",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "8066182643": {
       "total_spent": 440.0,
@@ -429,145 +831,289 @@
       "registration_date": "2026-02-11T08:03:29.267346",
       "last_activity": "2026-02-25T07:50:04.561993",
       "is_subscribed": true,
-      "subscription_checked_at": "2026-02-25T11:46:45.947541"
+      "subscription_checked_at": "2026-02-25T11:46:45.947541",
+      "referral_code": "5668290F",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "5998226257": {
       "total_spent": 68.75,
       "total_orders": 1,
       "registration_date": "2026-02-11T10:55:10.864768",
-      "last_activity": "2026-02-11T11:02:46.243999"
+      "last_activity": "2026-02-11T11:02:46.243999",
+      "referral_code": "3771F343",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "7961724276": {
       "total_spent": 625.0,
       "total_orders": 1,
       "registration_date": "2026-02-11T11:07:52.578853",
-      "last_activity": "2026-02-11T11:08:31.597924"
+      "last_activity": "2026-02-11T11:08:31.597924",
+      "referral_code": "21AAF3C4",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "6775562046": {
       "total_spent": 0.0,
       "total_orders": 0,
       "registration_date": "2026-02-11T12:05:29.686559",
-      "last_activity": "2026-02-11T12:05:29.686566"
+      "last_activity": "2026-02-11T12:05:29.686566",
+      "referral_code": "3A7BCF5B",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "309101891": {
       "total_spent": 100.0,
       "total_orders": 1,
       "registration_date": "2026-02-11T13:27:51.020016",
-      "last_activity": "2026-02-11T15:16:41.053594"
+      "last_activity": "2026-02-11T15:16:41.053594",
+      "referral_code": "026F109A",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "7402166928": {
       "total_spent": 30.0,
       "total_orders": 1,
       "registration_date": "2026-02-11T16:29:24.189591",
-      "last_activity": "2026-02-11T20:24:55.809929"
+      "last_activity": "2026-02-11T20:24:55.809929",
+      "referral_code": "ED2F3D61",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "5778615754": {
       "total_spent": 0.0,
       "total_orders": 0,
       "registration_date": "2026-02-11T17:14:19.781117",
-      "last_activity": "2026-02-11T17:14:19.781129"
+      "last_activity": "2026-02-11T17:14:19.781129",
+      "referral_code": "AB25F328",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "5111926115": {
       "total_spent": 0.0,
       "total_orders": 0,
       "registration_date": "2026-02-11T18:48:52.237165",
-      "last_activity": "2026-02-11T18:48:52.237186"
+      "last_activity": "2026-02-11T18:48:52.237186",
+      "referral_code": "99417E85",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "1180337585": {
       "total_spent": 0.0,
       "total_orders": 0,
       "registration_date": "2026-02-11T20:53:22.374008",
-      "last_activity": "2026-02-11T20:53:22.374019"
+      "last_activity": "2026-02-11T20:53:22.374019",
+      "referral_code": "C9CEE779",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "2084516508": {
       "total_spent": 45.0,
       "total_orders": 1,
       "registration_date": "2026-02-11T22:03:41.943845",
-      "last_activity": "2026-02-11T22:06:18.582750"
+      "last_activity": "2026-02-11T22:06:18.582750",
+      "referral_code": "C7056F1A",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "7568678040": {
       "total_spent": 0.0,
       "total_orders": 0,
       "registration_date": "2026-02-12T06:35:43.852730",
-      "last_activity": "2026-02-12T06:35:43.852740"
+      "last_activity": "2026-02-12T06:35:43.852740",
+      "referral_code": "45E6DDD4",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "5304607198": {
       "total_spent": 0.0,
       "total_orders": 0,
       "registration_date": "2026-02-12T07:33:26.908621",
-      "last_activity": "2026-02-12T07:33:26.908632"
+      "last_activity": "2026-02-12T07:33:26.908632",
+      "referral_code": "1F5BE9A4",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "8181964752": {
       "total_spent": 90.0,
       "total_orders": 2,
       "registration_date": "2026-02-12T12:28:46.506908",
-      "last_activity": "2026-02-14T15:50:22.414579"
+      "last_activity": "2026-02-14T15:50:22.414579",
+      "referral_code": "1620E839",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "5590836939": {
       "total_spent": 30.0,
       "total_orders": 1,
       "registration_date": "2026-02-12T15:40:49.010990",
-      "last_activity": "2026-02-12T15:45:41.957791"
+      "last_activity": "2026-02-12T15:45:41.957791",
+      "referral_code": "9717CC2B",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "5999791399": {
       "total_spent": 0.0,
       "total_orders": 0,
       "registration_date": "2026-02-12T16:09:32.587619",
-      "last_activity": "2026-02-12T16:09:32.587627"
+      "last_activity": "2026-02-12T16:09:32.587627",
+      "referral_code": "AC1AA183",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "1252952476": {
       "total_spent": 60.0,
       "total_orders": 1,
       "registration_date": "2026-02-12T19:25:50.389724",
-      "last_activity": "2026-02-12T19:28:51.453855"
+      "last_activity": "2026-02-12T19:28:51.453855",
+      "referral_code": "A1B25C3C",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "8027038489": {
       "total_spent": 0.0,
       "total_orders": 0,
       "registration_date": "2026-02-13T04:42:53.379575",
-      "last_activity": "2026-02-13T04:42:53.379585"
+      "last_activity": "2026-02-13T04:42:53.379585",
+      "referral_code": "8912FE23",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "8418144711": {
       "total_spent": 0.0,
       "total_orders": 0,
       "registration_date": "2026-02-13T06:48:52.942651",
-      "last_activity": "2026-02-13T06:48:52.942662"
+      "last_activity": "2026-02-13T06:48:52.942662",
+      "referral_code": "FE96AB82",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "5206274096": {
       "total_spent": 0.0,
       "total_orders": 0,
       "registration_date": "2026-02-13T09:21:23.616844",
-      "last_activity": "2026-02-13T09:21:23.616854"
+      "last_activity": "2026-02-13T09:21:23.616854",
+      "referral_code": "B686EC46",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "8537919651": {
       "total_spent": 0.0,
       "total_orders": 0,
       "registration_date": "2026-02-13T12:00:11.366638",
-      "last_activity": "2026-02-13T12:00:11.366650"
+      "last_activity": "2026-02-13T12:00:11.366650",
+      "referral_code": "FF39E925",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "5317366489": {
       "total_spent": 120.0,
       "total_orders": 1,
       "registration_date": "2026-02-13T13:25:45.223891",
-      "last_activity": "2026-02-13T13:29:13.556219"
+      "last_activity": "2026-02-13T13:29:13.556219",
+      "referral_code": "4D24F21E",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "1082404685": {
       "total_spent": 0.0,
       "total_orders": 0,
       "registration_date": "2026-02-13T19:24:14.498135",
-      "last_activity": "2026-02-13T19:24:14.498146"
+      "last_activity": "2026-02-13T19:24:14.498146",
+      "referral_code": "E7127F0D",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "6574743880": {
       "total_spent": 0.0,
       "total_orders": 0,
       "registration_date": "2026-02-13T19:29:59.432718",
-      "last_activity": "2026-02-13T19:29:59.432726"
+      "last_activity": "2026-02-13T19:29:59.432726",
+      "referral_code": "DDDDA33D",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "8572456885": {
       "total_spent": 0.0,
       "total_orders": 0,
       "registration_date": "2026-02-13T20:53:21.961002",
-      "last_activity": "2026-02-13T20:53:21.961012"
+      "last_activity": "2026-02-13T20:53:21.961012",
+      "referral_code": "9C167A8C",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "6300070157": {
       "total_spent": 0.0,
@@ -575,73 +1121,145 @@
       "registration_date": "2026-02-13T21:44:29.870120",
       "last_activity": "2026-02-13T21:44:29.870141",
       "is_subscribed": true,
-      "subscription_checked_at": "2026-02-26T18:17:19.338435"
+      "subscription_checked_at": "2026-02-26T18:17:19.338435",
+      "referral_code": "86765E5F",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "8365506740": {
       "total_spent": 0.0,
       "total_orders": 0,
       "registration_date": "2026-02-14T01:06:49.312569",
-      "last_activity": "2026-02-14T01:06:49.312579"
+      "last_activity": "2026-02-14T01:06:49.312579",
+      "referral_code": "73BBD574",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "8150550034": {
       "total_spent": 0.0,
       "total_orders": 0,
       "registration_date": "2026-02-14T03:00:48.506792",
-      "last_activity": "2026-02-14T03:00:48.506802"
+      "last_activity": "2026-02-14T03:00:48.506802",
+      "referral_code": "8418E4EF",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "7069110424": {
       "total_spent": 0.0,
       "total_orders": 0,
       "registration_date": "2026-02-14T11:50:45.206782",
-      "last_activity": "2026-02-14T11:50:45.206792"
+      "last_activity": "2026-02-14T11:50:45.206792",
+      "referral_code": "E7863F03",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "7617013834": {
       "total_spent": 0.0,
       "total_orders": 0,
       "registration_date": "2026-02-14T12:31:06.172239",
-      "last_activity": "2026-02-14T12:31:06.172250"
+      "last_activity": "2026-02-14T12:31:06.172250",
+      "referral_code": "958F7812",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "6305032142": {
       "total_spent": 100.0,
       "total_orders": 2,
       "registration_date": "2026-02-14T13:32:33.999764",
-      "last_activity": "2026-02-22T13:39:19.977987"
+      "last_activity": "2026-02-22T13:39:19.977987",
+      "referral_code": "48ECB975",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "775666148": {
       "total_spent": 40.0,
       "total_orders": 1,
       "registration_date": "2026-02-14T14:50:21.717594",
-      "last_activity": "2026-02-14T14:53:03.351395"
+      "last_activity": "2026-02-14T14:53:03.351395",
+      "referral_code": "1AF2F044",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "7422280910": {
       "total_spent": 156.0,
       "total_orders": 1,
       "registration_date": "2026-02-14T15:42:57.713050",
-      "last_activity": "2026-02-14T15:47:09.559961"
+      "last_activity": "2026-02-14T15:47:09.559961",
+      "referral_code": "940D40C3",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "1680080776": {
       "total_spent": 0.0,
       "total_orders": 0,
       "registration_date": "2026-02-14T18:39:00.506229",
-      "last_activity": "2026-02-14T18:39:00.506255"
+      "last_activity": "2026-02-14T18:39:00.506255",
+      "referral_code": "D2034CB1",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "5466789017": {
       "total_spent": 0.0,
       "total_orders": 0,
       "registration_date": "2026-02-14T20:17:03.790123",
-      "last_activity": "2026-02-14T20:17:03.790133"
+      "last_activity": "2026-02-14T20:17:03.790133",
+      "referral_code": "92F041E7",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "807371798": {
       "total_spent": 70.0,
       "total_orders": 1,
       "registration_date": "2026-02-15T06:03:37.347690",
-      "last_activity": "2026-02-15T06:08:30.888973"
+      "last_activity": "2026-02-15T06:08:30.888973",
+      "referral_code": "5B30B17E",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "7831574417": {
       "total_spent": 320.0,
       "total_orders": 1,
       "registration_date": "2026-02-15T11:17:27.784280",
-      "last_activity": "2026-02-15T11:20:29.463411"
+      "last_activity": "2026-02-15T11:20:29.463411",
+      "referral_code": "742DD8BF",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "6973203918": {
       "total_spent": 45.0,
@@ -649,337 +1267,673 @@
       "registration_date": "2026-02-15T12:32:31.175686",
       "last_activity": "2026-02-28T15:18:47.243025",
       "is_subscribed": true,
-      "subscription_checked_at": "2026-02-28T15:11:01.830183"
+      "subscription_checked_at": "2026-02-28T15:11:01.830183",
+      "referral_code": "F23A6BA5",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "6080168480": {
       "total_spent": 0.0,
       "total_orders": 0,
       "registration_date": "2026-02-15T13:36:29.923674",
-      "last_activity": "2026-02-15T13:36:29.923684"
+      "last_activity": "2026-02-15T13:36:29.923684",
+      "referral_code": "4296855F",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "6227432944": {
       "total_spent": 105.0,
       "total_orders": 2,
       "registration_date": "2026-02-15T14:07:05.191111",
-      "last_activity": "2026-02-17T15:38:13.078856"
+      "last_activity": "2026-02-17T15:38:13.078856",
+      "referral_code": "3A731097",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "816074322": {
       "total_spent": 160.0,
       "total_orders": 3,
       "registration_date": "2026-02-15T15:30:01.791142",
-      "last_activity": "2026-02-17T09:20:41.562835"
+      "last_activity": "2026-02-17T09:20:41.562835",
+      "referral_code": "50132E98",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "8308463193": {
       "total_spent": 0.0,
       "total_orders": 0,
       "registration_date": "2026-02-15T19:07:20.410254",
-      "last_activity": "2026-02-15T19:07:20.410269"
+      "last_activity": "2026-02-15T19:07:20.410269",
+      "referral_code": "A95873EC",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "580308854": {
       "total_spent": 0.0,
       "total_orders": 0,
       "registration_date": "2026-02-15T19:39:35.121966",
-      "last_activity": "2026-02-15T19:39:35.121977"
+      "last_activity": "2026-02-15T19:39:35.121977",
+      "referral_code": "7F3DCE1D",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "8577532723": {
       "total_spent": 0.0,
       "total_orders": 0,
       "registration_date": "2026-02-15T20:31:32.921008",
-      "last_activity": "2026-02-15T20:31:32.921019"
+      "last_activity": "2026-02-15T20:31:32.921019",
+      "referral_code": "319CCA3D",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "921119019": {
       "total_spent": 40.0,
       "total_orders": 1,
       "registration_date": "2026-02-15T20:31:38.861768",
-      "last_activity": "2026-02-15T20:34:34.702186"
+      "last_activity": "2026-02-15T20:34:34.702186",
+      "referral_code": "4FA98F87",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "7497018019": {
       "total_spent": 60.0,
       "total_orders": 1,
       "registration_date": "2026-02-15T21:55:21.442508",
-      "last_activity": "2026-02-15T21:57:01.430616"
+      "last_activity": "2026-02-15T21:57:01.430616",
+      "referral_code": "D3A3442D",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "429776515": {
       "total_spent": 0.0,
       "total_orders": 0,
       "registration_date": "2026-02-15T22:44:39.404033",
-      "last_activity": "2026-02-15T22:44:39.404044"
+      "last_activity": "2026-02-15T22:44:39.404044",
+      "referral_code": "90A6FFDD",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "7881879833": {
       "total_spent": 100.0,
       "total_orders": 1,
       "registration_date": "2026-02-16T03:33:26.750622",
-      "last_activity": "2026-02-16T03:35:50.829360"
+      "last_activity": "2026-02-16T03:35:50.829360",
+      "referral_code": "333DBD96",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "5255267310": {
       "total_spent": 0.0,
       "total_orders": 0,
       "registration_date": "2026-02-17T06:22:52.981588",
-      "last_activity": "2026-02-17T06:22:52.981598"
+      "last_activity": "2026-02-17T06:22:52.981598",
+      "referral_code": "43D60383",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "2137207379": {
       "total_spent": 120.0,
       "total_orders": 1,
       "registration_date": "2026-02-17T06:58:01.911393",
-      "last_activity": "2026-02-17T06:58:01.913077"
+      "last_activity": "2026-02-17T06:58:01.913077",
+      "referral_code": "9CCA5BBE",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "2060666702": {
       "total_spent": 120.0,
       "total_orders": 1,
       "registration_date": "2026-02-17T08:15:24.241203",
-      "last_activity": "2026-02-17T08:20:08.956216"
+      "last_activity": "2026-02-17T08:20:08.956216",
+      "referral_code": "2AD4BBF3",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "6181629767": {
       "total_spent": 0.0,
       "total_orders": 0,
       "registration_date": "2026-02-17T10:32:34.449003",
-      "last_activity": "2026-02-17T10:32:34.449011"
+      "last_activity": "2026-02-17T10:32:34.449011",
+      "referral_code": "6E58B82A",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "8537818214": {
       "total_spent": 40.0,
       "total_orders": 1,
       "registration_date": "2026-02-17T11:52:18.533564",
-      "last_activity": "2026-02-17T11:54:32.280123"
+      "last_activity": "2026-02-17T11:54:32.280123",
+      "referral_code": "A1EBEECC",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "7152602362": {
       "total_spent": 0.0,
       "total_orders": 0,
       "registration_date": "2026-02-17T13:36:21.711609",
-      "last_activity": "2026-02-17T13:36:21.711619"
+      "last_activity": "2026-02-17T13:36:21.711619",
+      "referral_code": "1E63CB18",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "1636967577": {
       "total_spent": 0.0,
       "total_orders": 0,
       "registration_date": "2026-02-17T13:55:46.211518",
-      "last_activity": "2026-02-17T13:55:46.211526"
+      "last_activity": "2026-02-17T13:55:46.211526",
+      "referral_code": "D6BA22CC",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "8420865806": {
       "total_spent": 0.0,
       "total_orders": 0,
       "registration_date": "2026-02-17T17:16:28.953944",
-      "last_activity": "2026-02-17T17:16:28.953953"
+      "last_activity": "2026-02-17T17:16:28.953953",
+      "referral_code": "1BF35020",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "6507625623": {
       "total_spent": 0.0,
       "total_orders": 0,
       "registration_date": "2026-02-17T18:01:57.462023",
-      "last_activity": "2026-02-17T18:01:57.462033"
+      "last_activity": "2026-02-17T18:01:57.462033",
+      "referral_code": "1E27E23A",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "7608967508": {
       "total_spent": 45.0,
       "total_orders": 1,
       "registration_date": "2026-02-17T18:53:01.290928",
-      "last_activity": "2026-02-17T18:54:23.235686"
+      "last_activity": "2026-02-17T18:54:23.235686",
+      "referral_code": "8072C0E6",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "7726949919": {
       "total_spent": 40.0,
       "total_orders": 1,
       "registration_date": "2026-02-17T19:11:41.807394",
-      "last_activity": "2026-02-18T05:12:38.585256"
+      "last_activity": "2026-02-18T05:12:38.585256",
+      "referral_code": "BF8CA9AE",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "8518242882": {
       "total_spent": 70.0,
       "total_orders": 1,
       "registration_date": "2026-02-17T21:51:27.332407",
-      "last_activity": "2026-02-17T21:52:01.882238"
+      "last_activity": "2026-02-17T21:52:01.882238",
+      "referral_code": "D3E6B8E1",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "1079374745": {
       "total_spent": 0.0,
       "total_orders": 0,
       "registration_date": "2026-02-17T23:57:23.472435",
-      "last_activity": "2026-02-17T23:57:23.472444"
+      "last_activity": "2026-02-17T23:57:23.472444",
+      "referral_code": "B22D4EBD",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "6922182825": {
       "total_spent": 40.0,
       "total_orders": 1,
       "registration_date": "2026-02-18T01:10:44.345391",
-      "last_activity": "2026-02-18T01:17:00.566652"
+      "last_activity": "2026-02-18T01:17:00.566652",
+      "referral_code": "DDC76083",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "8311669755": {
       "total_spent": 0.0,
       "total_orders": 0,
       "registration_date": "2026-02-18T07:28:52.015907",
-      "last_activity": "2026-02-18T07:28:52.015916"
+      "last_activity": "2026-02-18T07:28:52.015916",
+      "referral_code": "120C4758",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "8077588026": {
       "total_spent": 0.0,
       "total_orders": 0,
       "registration_date": "2026-02-18T12:54:47.901008",
-      "last_activity": "2026-02-18T12:54:47.901017"
+      "last_activity": "2026-02-18T12:54:47.901017",
+      "referral_code": "C88E6721",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "754155311": {
       "total_spent": 0.0,
       "total_orders": 0,
       "registration_date": "2026-02-18T13:20:36.248607",
-      "last_activity": "2026-02-18T13:20:36.248616"
+      "last_activity": "2026-02-18T13:20:36.248616",
+      "referral_code": "F5C1DD4C",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "8033481215": {
       "total_spent": 270.0,
       "total_orders": 3,
       "registration_date": "2026-02-18T16:28:41.761572",
-      "last_activity": "2026-02-22T16:51:27.980590"
+      "last_activity": "2026-02-22T16:51:27.980590",
+      "referral_code": "EC0B6DEC",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "5027989128": {
       "total_spent": 60.0,
       "total_orders": 1,
       "registration_date": "2026-02-18T16:36:24.765941",
-      "last_activity": "2026-02-18T16:38:16.197718"
+      "last_activity": "2026-02-18T16:38:16.197718",
+      "referral_code": "B3A81413",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "7136733478": {
       "total_spent": 0.0,
       "total_orders": 0,
       "registration_date": "2026-02-18T17:28:45.461648",
-      "last_activity": "2026-02-18T17:28:45.461656"
+      "last_activity": "2026-02-18T17:28:45.461656",
+      "referral_code": "B9986859",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "1415878641": {
       "total_spent": 60.0,
       "total_orders": 1,
       "registration_date": "2026-02-18T17:47:45.472088",
-      "last_activity": "2026-02-18T17:50:01.628077"
+      "last_activity": "2026-02-18T17:50:01.628077",
+      "referral_code": "4C5B4ECC",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "5263168706": {
       "total_spent": 0.0,
       "total_orders": 0,
       "registration_date": "2026-02-18T18:26:09.600044",
-      "last_activity": "2026-02-18T18:26:09.600054"
+      "last_activity": "2026-02-18T18:26:09.600054",
+      "referral_code": "FF676409",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "7746088975": {
       "total_spent": 45.0,
       "total_orders": 1,
       "registration_date": "2026-02-19T01:35:01.302325",
-      "last_activity": "2026-02-19T01:37:03.476338"
+      "last_activity": "2026-02-19T01:37:03.476338",
+      "referral_code": "6BE2D274",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "8423060151": {
       "total_spent": 70.0,
       "total_orders": 1,
       "registration_date": "2026-02-19T04:38:55.063067",
-      "last_activity": "2026-02-19T04:43:02.216321"
+      "last_activity": "2026-02-19T04:43:02.216321",
+      "referral_code": "3BF93FDB",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "8391884951": {
       "total_spent": 0.0,
       "total_orders": 0,
       "registration_date": "2026-02-19T05:29:15.725877",
-      "last_activity": "2026-02-19T05:29:15.725884"
+      "last_activity": "2026-02-19T05:29:15.725884",
+      "referral_code": "5FEDDA27",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "8593003682": {
       "total_spent": 0.0,
       "total_orders": 0,
       "registration_date": "2026-02-19T10:07:16.417643",
-      "last_activity": "2026-02-19T10:07:16.417651"
+      "last_activity": "2026-02-19T10:07:16.417651",
+      "referral_code": "35B8C7E1",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "8537444929": {
       "total_spent": 0.0,
       "total_orders": 0,
       "registration_date": "2026-02-19T15:33:37.284616",
-      "last_activity": "2026-02-19T15:33:37.284627"
+      "last_activity": "2026-02-19T15:33:37.284627",
+      "referral_code": "56D20310",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "8583721863": {
       "total_spent": 0.0,
       "total_orders": 0,
       "registration_date": "2026-02-19T15:55:22.535627",
-      "last_activity": "2026-02-19T15:55:22.535633"
+      "last_activity": "2026-02-19T15:55:22.535633",
+      "referral_code": "C7910E92",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "717769545": {
       "total_spent": 0.0,
       "total_orders": 0,
       "registration_date": "2026-02-19T16:07:48.089748",
-      "last_activity": "2026-02-19T16:07:48.089753"
+      "last_activity": "2026-02-19T16:07:48.089753",
+      "referral_code": "3C46677C",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "1779612129": {
       "total_spent": 0.0,
       "total_orders": 0,
       "registration_date": "2026-02-19T16:12:38.213148",
-      "last_activity": "2026-02-19T16:12:38.213156"
+      "last_activity": "2026-02-19T16:12:38.213156",
+      "referral_code": "E8711FD7",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "5901681021": {
       "total_spent": 40.0,
       "total_orders": 1,
       "registration_date": "2026-02-19T16:34:51.504967",
-      "last_activity": "2026-02-19T16:40:30.778432"
+      "last_activity": "2026-02-19T16:40:30.778432",
+      "referral_code": "0E0F6A1B",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "7001577910": {
       "total_spent": 0.0,
       "total_orders": 0,
       "registration_date": "2026-02-19T17:58:31.658327",
-      "last_activity": "2026-02-19T17:58:31.658336"
+      "last_activity": "2026-02-19T17:58:31.658336",
+      "referral_code": "B3058B41",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "6971345288": {
       "total_spent": 0.0,
       "total_orders": 0,
       "registration_date": "2026-02-19T18:12:15.252059",
-      "last_activity": "2026-02-19T18:12:15.252068"
+      "last_activity": "2026-02-19T18:12:15.252068",
+      "referral_code": "66E4F552",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "920199540": {
       "total_spent": 100.0,
       "total_orders": 1,
       "registration_date": "2026-02-19T18:49:40.554691",
-      "last_activity": "2026-02-19T18:52:22.911764"
+      "last_activity": "2026-02-19T18:52:22.911764",
+      "referral_code": "4156F823",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "6400571861": {
       "total_spent": 70.0,
       "total_orders": 1,
       "registration_date": "2026-02-19T19:19:59.178767",
-      "last_activity": "2026-02-19T19:26:07.893297"
+      "last_activity": "2026-02-19T19:26:07.893297",
+      "referral_code": "6323F462",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "5030002240": {
       "total_spent": 60.0,
       "total_orders": 1,
       "registration_date": "2026-02-19T20:22:01.609774",
-      "last_activity": "2026-02-19T20:24:48.224996"
+      "last_activity": "2026-02-19T20:24:48.224996",
+      "referral_code": "9513BD11",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "6777382624": {
       "total_spent": 30.0,
       "total_orders": 1,
       "registration_date": "2026-02-19T21:26:56.078950",
-      "last_activity": "2026-02-21T16:08:14.513671"
+      "last_activity": "2026-02-21T16:08:14.513671",
+      "referral_code": "CB597A48",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "1407167846": {
       "total_spent": 70.0,
       "total_orders": 1,
       "registration_date": "2026-02-20T08:19:01.247783",
-      "last_activity": "2026-02-20T09:00:36.220868"
+      "last_activity": "2026-02-20T09:00:36.220868",
+      "referral_code": "2D2147B0",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "7926323850": {
       "total_spent": 45.0,
       "total_orders": 1,
       "registration_date": "2026-02-20T11:48:35.153140",
-      "last_activity": "2026-02-20T11:48:35.155495"
+      "last_activity": "2026-02-20T11:48:35.155495",
+      "referral_code": "67B6F2C2",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "6279547799": {
       "total_spent": 0.0,
       "total_orders": 0,
       "registration_date": "2026-02-20T13:22:28.706761",
-      "last_activity": "2026-02-20T13:22:28.706769"
+      "last_activity": "2026-02-20T13:22:28.706769",
+      "referral_code": "0EA9097B",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "7363110183": {
       "total_spent": 0.0,
       "total_orders": 0,
       "registration_date": "2026-02-20T13:46:55.953172",
-      "last_activity": "2026-02-20T13:46:55.953178"
+      "last_activity": "2026-02-20T13:46:55.953178",
+      "referral_code": "443757C3",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "6496723666": {
       "total_spent": 0.0,
       "total_orders": 0,
       "registration_date": "2026-02-20T14:05:23.553830",
-      "last_activity": "2026-02-20T14:05:23.553837"
+      "last_activity": "2026-02-20T14:05:23.553837",
+      "referral_code": "699EB716",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "5505269798": {
       "total_spent": 0.0,
       "total_orders": 0,
       "registration_date": "2026-02-20T14:21:29.486581",
-      "last_activity": "2026-02-20T14:21:29.486590"
+      "last_activity": "2026-02-20T14:21:29.486590",
+      "referral_code": "192E1BCB",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "5972972812": {
       "total_spent": 70.0,
       "total_orders": 1,
       "registration_date": "2026-02-20T15:13:33.442486",
-      "last_activity": "2026-02-20T15:15:32.275768"
+      "last_activity": "2026-02-20T15:15:32.275768",
+      "referral_code": "08D41459",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "7759974820": {
       "total_spent": 0.0,
       "total_orders": 0,
       "registration_date": "2026-02-20T15:25:48.414427",
-      "last_activity": "2026-02-20T15:25:48.414436"
+      "last_activity": "2026-02-20T15:25:48.414436",
+      "referral_code": "25181C03",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "1400681377": {
       "total_spent": 160.0,
@@ -987,85 +1941,169 @@
       "registration_date": "2026-02-20T19:38:29.897876",
       "last_activity": "2026-02-22T13:53:59.958534",
       "is_subscribed": true,
-      "subscription_checked_at": "2026-02-22T13:51:32.520842"
+      "subscription_checked_at": "2026-02-22T13:51:32.520842",
+      "referral_code": "5BF3AA1F",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "5170710431": {
       "total_spent": 0.0,
       "total_orders": 0,
       "registration_date": "2026-02-20T21:49:43.615119",
-      "last_activity": "2026-02-20T21:49:43.615127"
+      "last_activity": "2026-02-20T21:49:43.615127",
+      "referral_code": "5635B28D",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "5476445266": {
       "total_spent": 0.0,
       "total_orders": 0,
       "registration_date": "2026-02-20T23:49:10.577821",
-      "last_activity": "2026-02-20T23:49:10.577830"
+      "last_activity": "2026-02-20T23:49:10.577830",
+      "referral_code": "83C108B9",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "1527674530": {
       "total_spent": 0.0,
       "total_orders": 0,
       "registration_date": "2026-02-21T07:47:07.785675",
-      "last_activity": "2026-02-21T07:47:07.785687"
+      "last_activity": "2026-02-21T07:47:07.785687",
+      "referral_code": "7D58D85D",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "8129271181": {
       "total_spent": 60.0,
       "total_orders": 1,
       "registration_date": "2026-02-21T07:51:49.377072",
-      "last_activity": "2026-02-21T07:55:49.301471"
+      "last_activity": "2026-02-21T07:55:49.301471",
+      "referral_code": "AE6DF806",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "800212662": {
       "total_spent": 140.0,
       "total_orders": 2,
       "registration_date": "2026-02-21T09:36:36.097124",
-      "last_activity": "2026-02-23T15:54:11.878197"
+      "last_activity": "2026-02-23T15:54:11.878197",
+      "referral_code": "93E49579",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "5205726847": {
       "total_spent": 0.0,
       "total_orders": 0,
       "registration_date": "2026-02-21T10:20:50.225837",
-      "last_activity": "2026-02-21T10:20:50.225844"
+      "last_activity": "2026-02-21T10:20:50.225844",
+      "referral_code": "AB4E36A1",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "8228182615": {
       "total_spent": 100.0,
       "total_orders": 1,
       "registration_date": "2026-02-21T10:50:56.120333",
-      "last_activity": "2026-02-21T11:01:20.911602"
+      "last_activity": "2026-02-21T11:01:20.911602",
+      "referral_code": "1BA2C0C0",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "1107051773": {
       "total_spent": 0.0,
       "total_orders": 0,
       "registration_date": "2026-02-21T11:19:31.589678",
-      "last_activity": "2026-02-21T11:19:31.589687"
+      "last_activity": "2026-02-21T11:19:31.589687",
+      "referral_code": "7A658F0A",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "5018629369": {
       "total_spent": 0.0,
       "total_orders": 0,
       "registration_date": "2026-02-21T12:56:23.375225",
-      "last_activity": "2026-02-21T12:56:23.375234"
+      "last_activity": "2026-02-21T12:56:23.375234",
+      "referral_code": "9063141B",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "883285365": {
       "total_spent": 45.0,
       "total_orders": 1,
       "registration_date": "2026-02-21T13:01:26.682033",
-      "last_activity": "2026-02-22T04:55:08.850909"
+      "last_activity": "2026-02-22T04:55:08.850909",
+      "referral_code": "3D81DD63",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "6772820968": {
       "total_spent": 0.0,
       "total_orders": 0,
       "registration_date": "2026-02-21T13:28:33.780145",
-      "last_activity": "2026-02-21T13:28:33.780154"
+      "last_activity": "2026-02-21T13:28:33.780154",
+      "referral_code": "C1F12DC8",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "6402454405": {
       "total_spent": 0.0,
       "total_orders": 0,
       "registration_date": "2026-02-21T16:36:12.063917",
-      "last_activity": "2026-02-21T16:36:12.063927"
+      "last_activity": "2026-02-21T16:36:12.063927",
+      "referral_code": "2F09308F",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "6537268503": {
       "total_spent": 0.0,
       "total_orders": 0,
       "registration_date": "2026-02-21T17:26:38.843356",
-      "last_activity": "2026-02-21T17:26:38.843364"
+      "last_activity": "2026-02-21T17:26:38.843364",
+      "referral_code": "DBF7CF64",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0
     },
     "1924282540": {
       "total_spent": 60.0,
