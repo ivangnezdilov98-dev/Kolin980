@@ -32,17 +32,35 @@ class Config:
     REQUIRED_CHANNEL = "@prodaja_akkov_tg"
     REQUIRED_CHANNEL_URL = "https://t.me/prodaja_akkov_tg"
     
-    # Реквизиты для оплаты (только Ozon)
+    # Реквизиты для оплаты (разные способы)
     PAYMENT_DETAILS = {
-        "ozon": {
-            "name": "Ozon Банк (СБП/Карта)",
-            "card_number": "2200 2488 7412 7581",
+        "sbp": {
+            "name": "💳 СБП (Любой банк)",
             "phone_number": "+79225739192",
-            "owner": "Иван Г."
+            "bank": "Т-Банк",
+            "owner": "Иван Г.",
+            "emoji": "💳"
+        },
+        "yoomoney": {
+            "name": "💰 ЮMoney",
+            "account": "410011234567890",
+            "owner": "Иван Г.",
+            "emoji": "💰"
+        },
+        "usdt": {
+            "name": "₿ USDT (TRC-20)",
+            "address": "TX7q8Xx9yZ5rP2mN3kL6jH4gF5dS8aB2cV",
+            "network": "TRC-20",
+            "emoji": "₿"
+        },
+        "ton": {
+            "name": "💎 TON Coin",
+            "address": "UQDJK1h2g3F4n5M6k7L8p9Q0w1E2r3Y4u5I6",
+            "emoji": "💎"
         }
     }
     
-    # Настройки реферальной программы (можно менять)
+    # Настройки реферальной программы
     REFERRAL_CONFIG = {
         "enabled": True,
         "min_purchase_amount": 70,
@@ -74,7 +92,9 @@ class AddProductStates(StatesGroup):
     waiting_for_description = State()
 
 class PaymentStates(StatesGroup):
+    waiting_for_payment_method = State()
     waiting_for_screenshot = State()
+    waiting_for_quantity = State()
 
 class DeleteProductStates(StatesGroup):
     waiting_for_product_choice = State()
@@ -108,10 +128,12 @@ class Database:
                     self.products = data.get('products', [])
                     self.categories = data.get('categories', [])
             else:
+                # Категории для аккаунтов
                 self.categories = [
-                    {"id": 1, "name": "💻 Цифровые услуги"},
-                    {"id": 2, "name": "🎨 Дизайн"},
-                    {"id": 3, "name": "📝 Контент"}
+                    {"id": 1, "name": "🇲🇲 Аккаунты Мьянма"},
+                    {"id": 2, "name": "🇹🇷 Аккаунты Турция"},
+                    {"id": 3, "name": "📸 Аккаунты Инстаграм"},
+                    {"id": 4, "name": "📱 Другие аккаунты"}
                 ]
                 self.save_products_data()
             
@@ -203,8 +225,6 @@ class Database:
         except Exception as e:
             print(f"Ошибка обновления статистики: {e}")
     
-    
-    
     # Работа с ожидающими заказами
     def add_pending_order(self, order_id: str, order_data: Dict):
         """Добавить ожидающий заказ"""
@@ -278,7 +298,6 @@ async def check_subscription(user_id: int) -> bool:
     """Проверяет, подписан ли пользователь на канал"""
     try:
         member = await bot.get_chat_member(chat_id=config.REQUIRED_CHANNEL, user_id=user_id)
-        
         if member.status in ['member', 'administrator', 'creator']:
             return True
         return False
@@ -363,7 +382,7 @@ async def apply_referral_reward(user_id: int, purchase_amount: float) -> Dict:
         print(f"Ошибка при применении награды: {e}")
         return {"applied": False, "error": str(e)}
 
-# ==================== МИГРАЦИЯ ДАННЫХ ДЛЯ СТАРЫХ ПОЛЬЗОВАТЕЛЕЙ ====================
+# ==================== МИГРАЦИЯ ДАННЫХ ====================
 
 async def migrate_existing_users():
     """Добавляет реферальные коды всем существующим пользователям"""
@@ -371,14 +390,11 @@ async def migrate_existing_users():
     
     migrated_count = 0
     for user_id, user_data in db.users.items():
-        # Проверяем, есть ли реферальный код
         if 'referral_code' not in user_data or not user_data.get('referral_code'):
-            # Генерируем новый код
             user_data['referral_code'] = db._generate_referral_code(user_id)
             migrated_count += 1
             print(f"  ➕ Добавлен реферальный код для пользователя {user_id}")
         
-        # Добавляем недостающие поля, если их нет
         default_fields = {
             'referred_by': None,
             'referrals': [],
@@ -390,15 +406,12 @@ async def migrate_existing_users():
         for field, default_value in default_fields.items():
             if field not in user_data:
                 user_data[field] = default_value
-                if field not in ['referred_by', 'referrals']:
-                    print(f"  ➕ Добавлено поле {field} для пользователя {user_id}")
     
     if migrated_count > 0:
         db.save_users_data()
         print(f"✅ Миграция завершена. Обновлено {migrated_count} пользователей")
     else:
         print("✅ Все пользователи уже имеют реферальные коды")
-
 
 async def get_referral_info(user_id: int) -> str:
     """Получает информацию о реферальной программе для пользователя"""
@@ -610,6 +623,23 @@ async def send_to_order_channel(order_data: Dict, screenshot_file_id: str = None
         total_amount = order_data.get('total', 0)
         product_name = order_data.get('product_name', 'Неизвестный товар')
         product_price = order_data.get('product_price', 0)
+        quantity = order_data.get('quantity', 1)
+        payment_method = order_data.get('payment_method', 'Неизвестно')
+        
+        payment_emoji = {
+            "sbp": "💳",
+            "yoomoney": "💰", 
+            "usdt": "₿",
+            "ton": "💎"
+        }.get(payment_method, "💳")
+        
+        payment_names = {
+            "sbp": "СБП (Любой банк)",
+            "yoomoney": "ЮMoney",
+            "usdt": "USDT (TRC-20)",
+            "ton": "TON Coin"
+        }
+        payment_name = payment_names.get(payment_method, payment_method)
         
         if user_info == 'без username':
             username_warning = "⚠️ ВНИМАНИЕ: У покупателя НЕТ USERNAME!"
@@ -620,9 +650,11 @@ async def send_to_order_channel(order_data: Dict, screenshot_file_id: str = None
 
 👤 Покупатель: @{user_info}
 🆔 ID: {user_id}
-📦 Товар: {product_name}
-💰 Цена: {product_price:.2f}₽
-💳 Способ оплаты: Ozon (СБП/Карта)
+📦 Аккаунт: {product_name}
+🔢 Количество: {quantity} шт.
+💰 Цена за 1 шт.: {product_price:.2f}₽
+💳 Общая сумма: {total_amount:.2f}₽
+🏦 Способ оплаты: {payment_emoji} {payment_name}
 📅 Дата: {datetime.now().strftime('%d.%m.%Y %H:%M')}
 🆔 ID заказа: {order_id}
 """
@@ -640,7 +672,9 @@ async def send_to_order_channel(order_data: Dict, screenshot_file_id: str = None
             'total': total_amount,
             'product_name': product_name,
             'product_price': product_price,
-            'payment_method': 'Ozon (СБП/Карта)',
+            'quantity': quantity,
+            'payment_method': payment_method,
+            'payment_name': payment_name,
             'date': datetime.now().isoformat(),
             'has_username': user_info != 'без username'
         })
@@ -684,6 +718,22 @@ async def send_cart_to_order_channel(order_data: Dict, screenshot_file_id: str =
         user_id = order_data.get('user_id')
         order_id = order_data.get('order_id', 'N/A')
         cart_total = order_data.get('cart_total', {})
+        payment_method = order_data.get('payment_method', 'Неизвестно')
+        
+        payment_emoji = {
+            "sbp": "💳",
+            "yoomoney": "💰", 
+            "usdt": "₿",
+            "ton": "💎"
+        }.get(payment_method, "💳")
+        
+        payment_names = {
+            "sbp": "СБП (Любой банк)",
+            "yoomoney": "ЮMoney",
+            "usdt": "USDT (TRC-20)",
+            "ton": "TON Coin"
+        }
+        payment_name = payment_names.get(payment_method, payment_method)
         
         if cart_total['items_count'] == 0:
             print("❌ Пустая корзина при отправке в канал")
@@ -700,7 +750,7 @@ async def send_cart_to_order_channel(order_data: Dict, screenshot_file_id: str =
 {items_text}
 📦 Всего товаров: {cart_total['total_quantity']} шт.
 💰 Общая сумма: {cart_total['total_amount']:.2f}₽
-💳 Способ оплаты: Ozon (СБП/Карта)
+🏦 Способ оплаты: {payment_emoji} {payment_name}
 📅 Дата: {datetime.now().strftime('%d.%m.%Y %H:%M')}
 🆔 ID заказа: {order_id}
 """
@@ -719,7 +769,8 @@ async def send_cart_to_order_channel(order_data: Dict, screenshot_file_id: str =
             'is_cart_order': True,
             'cart_items': cart_total['items'],
             'total_quantity': cart_total['total_quantity'],
-            'payment_method': 'Ozon (СБП/Карта)',
+            'payment_method': payment_method,
+            'payment_name': payment_name,
             'date': datetime.now().isoformat(),
             'has_username': user_info != 'без username'
         })
@@ -765,7 +816,7 @@ def main_menu_kb(user_id: int = None) -> InlineKeyboardMarkup:
     cart_count = cart_manager.get_cart_items_count(user_id) if user_id else 0
     cart_text = f'🛒 Корзина ({cart_count})' if cart_count > 0 else '🛒 Корзина'
     
-    builder.row(InlineKeyboardButton(text='🛒 Посмотреть услуги', callback_data='view_categories'))
+    builder.row(InlineKeyboardButton(text='📱 Посмотреть аккаунты', callback_data='view_categories'))
     builder.row(
         InlineKeyboardButton(text=cart_text, callback_data='view_cart'),
         InlineKeyboardButton(text='🎁 Реферальная программа', callback_data='referral_info')
@@ -780,7 +831,7 @@ def main_menu_kb(user_id: int = None) -> InlineKeyboardMarkup:
     return builder.as_markup()
 
 def categories_kb() -> InlineKeyboardMarkup:
-    """Категории товаров"""
+    """Категории аккаунтов"""
     builder = InlineKeyboardBuilder()
     categories = db.get_categories()
     
@@ -796,42 +847,54 @@ def categories_kb() -> InlineKeyboardMarkup:
     )
     return builder.as_markup()
 
-def products_kb(category_id: int, page: int = 0, items_per_page: int = 10) -> InlineKeyboardMarkup:
-    """Товары в категории с пагинацией"""
+def products_kb(category_id: int, page: int = 0, items_per_page: int = 5) -> InlineKeyboardMarkup:
+    """Аккаунты в категории с пагинацией"""
     builder = InlineKeyboardBuilder()
     products = db.get_products_by_category(category_id)
     
     if not products:
-        builder.row(InlineKeyboardButton(text="📭 Нет товаров в этой категории", callback_data="no_action"))
+        builder.row(InlineKeyboardButton(text="📭 Нет аккаунтов в этой категории", callback_data="no_action"))
     else:
         total_pages = max(1, (len(products) + items_per_page - 1) // items_per_page)
         start_idx = page * items_per_page
         end_idx = min(start_idx + items_per_page, len(products))
         
         for product in products[start_idx:end_idx]:
+            emoji = "📱"
+            if "Мьянма" in product['name']:
+                emoji = "🇲🇲"
+            elif "Турция" in product['name']:
+                emoji = "🇹🇷"
+            elif "Инстаграм" in product['name']:
+                emoji = "📸"
+            
             product_name = product['name']
-            if len(product_name) > 25:
-                product_name = product_name[:22] + "..."
+            if len(product_name) > 20:
+                product_name = product_name[:17] + "..."
+            
+            stock_info = ""
+            if product.get('quantity', 9999) < 10:
+                stock_info = f"⚡️ {product['quantity']} шт."
             
             builder.row(InlineKeyboardButton(
-                text=f"📦 {product_name} - {product['price']}₽",
+                text=f"{emoji} {product_name} | {product['price']:.0f}₽ {stock_info}",
                 callback_data=f"product_{product['id']}"
             ))
         
         nav_buttons = []
         if page > 0:
-            nav_buttons.append(InlineKeyboardButton(text="⬅️ Назад", callback_data=f"page_{category_id}_{page-1}"))
+            nav_buttons.append(InlineKeyboardButton(text="◀️ Назад", callback_data=f"page_{category_id}_{page-1}"))
         
         if total_pages > 1:
             nav_buttons.append(InlineKeyboardButton(text=f"{page+1}/{total_pages}", callback_data="no_action"))
         
         if page < total_pages - 1:
-            nav_buttons.append(InlineKeyboardButton(text="Вперед ➡️", callback_data=f"page_{category_id}_{page+1}"))
+            nav_buttons.append(InlineKeyboardButton(text="Вперед ▶️", callback_data=f"page_{category_id}_{page+1}"))
         
         if nav_buttons:
             builder.row(*nav_buttons)
     
-    cart_count = cart_manager.get_cart_items_count(0)
+        cart_count = cart_manager.get_cart_items_count(0)
     cart_text = f'🛒 Корзина ({cart_count})' if cart_count > 0 else '🛒 Корзина'
     
     builder.row(InlineKeyboardButton(text=cart_text, callback_data='view_cart'))
@@ -842,51 +905,22 @@ def products_kb(category_id: int, page: int = 0, items_per_page: int = 10) -> In
     
     return builder.as_markup()
 
-@dp.message(Command("migrate_ref"))
-async def handle_migrate_ref(message: Message):
-    """Команда для принудительной миграции реферальных кодов (только для админов)"""
-    try:
-        if message.from_user.id not in config.ADMIN_IDS:
-            await message.answer("⛔ У вас нет прав администратора")
-            return
-        
-        await message.answer("🔄 Начинаю миграцию данных...")
-        
-        migrated_count = 0
-        for user_id, user_data in db.users.items():
-            if 'referral_code' not in user_data or not user_data.get('referral_code'):
-                user_data['referral_code'] = db._generate_referral_code(user_id)
-                migrated_count += 1
-            
-            # Добавляем все недостающие поля
-            fields_to_add = {
-                'referred_by': None,
-                'referrals': [],
-                'qualified_referrals': 0,
-                'available_rewards': 0,
-                'used_rewards': 0
-            }
-            
-            for field, value in fields_to_add.items():
-                if field not in user_data:
-                    user_data[field] = value
-        
-        if migrated_count > 0:
-            db.save_users_data()
-            await message.answer(f"✅ Миграция завершена. Добавлены реферальные коды для {migrated_count} пользователей")
-        else:
-            await message.answer("✅ Все пользователи уже имеют реферальные коды")
-            
-    except Exception as e:
-        await message.answer(f"❌ Ошибка при миграции: {e}")
-        print(f"Ошибка в migrate_ref: {e}")
-
 def product_detail_kb(product_id: int, category_id: int) -> InlineKeyboardMarkup:
-    """Детали товара"""
+    """Детали аккаунта с выбором количества"""
     builder = InlineKeyboardBuilder()
+    
+    # Кнопки для выбора количества
     builder.row(
-        InlineKeyboardButton(text='🛒 Добавить в корзину', callback_data=f'add_to_cart_{product_id}'),
-        InlineKeyboardButton(text='💳 Купить сейчас', callback_data=f'buy_product_{product_id}')
+        InlineKeyboardButton(text='1 шт', callback_data=f'qty_{product_id}_1'),
+        InlineKeyboardButton(text='2 шт', callback_data=f'qty_{product_id}_2'),
+        InlineKeyboardButton(text='3 шт', callback_data=f'qty_{product_id}_3'),
+        width=3
+    )
+    builder.row(
+        InlineKeyboardButton(text='5 шт', callback_data=f'qty_{product_id}_5'),
+        InlineKeyboardButton(text='10 шт', callback_data=f'qty_{product_id}_10'),
+        InlineKeyboardButton(text='Другое', callback_data=f'qty_custom_{product_id}'),
+        width=3
     )
     
     cart_count = cart_manager.get_cart_items_count(0)
@@ -897,6 +931,31 @@ def product_detail_kb(product_id: int, category_id: int) -> InlineKeyboardMarkup
         InlineKeyboardButton(text='🔙 Назад', callback_data=f'category_{category_id}'),
         InlineKeyboardButton(text='🏠 Главное меню', callback_data='main_menu')
     )
+    return builder.as_markup()
+
+def payment_methods_kb(product_id: int, quantity: int, total_amount: float) -> InlineKeyboardMarkup:
+    """Клавиатура выбора способа оплаты"""
+    builder = InlineKeyboardBuilder()
+    
+    builder.row(InlineKeyboardButton(
+        text='💳 СБП (Любой банк)', 
+        callback_data=f'pay_sbp_{product_id}_{quantity}'
+    ))
+    builder.row(InlineKeyboardButton(
+        text='💰 ЮMoney', 
+        callback_data=f'pay_yoomoney_{product_id}_{quantity}'
+    ))
+    builder.row(InlineKeyboardButton(
+        text='₿ USDT (TRC-20)', 
+        callback_data=f'pay_usdt_{product_id}_{quantity}'
+    ))
+    builder.row(InlineKeyboardButton(
+        text='💎 TON Coin', 
+        callback_data=f'pay_ton_{product_id}_{quantity}'
+    ))
+    
+    builder.row(InlineKeyboardButton(text='🔙 Назад к выбору количества', callback_data=f'product_{product_id}'))
+    
     return builder.as_markup()
 
 def cart_kb(cart_items: List[Dict], show_checkout: bool = True) -> InlineKeyboardMarkup:
@@ -923,7 +982,7 @@ def cart_kb(cart_items: List[Dict], show_checkout: bool = True) -> InlineKeyboar
             )
         
         builder.row(
-            InlineKeyboardButton(text='➕ Добавить еще товары', callback_data='view_categories'),
+            InlineKeyboardButton(text='➕ Добавить еще аккаунты', callback_data='view_categories'),
             InlineKeyboardButton(text='✏️ Изменить количество', callback_data='cart_edit_quantity')
         )
     
@@ -951,7 +1010,7 @@ def admin_panel_kb() -> InlineKeyboardMarkup:
     """Клавиатура админ-панели"""
     builder = InlineKeyboardBuilder()
     builder.row(
-        InlineKeyboardButton(text='📦 Управление товарами', callback_data='admin_products'),
+        InlineKeyboardButton(text='📦 Управление аккаунтами', callback_data='admin_products'),
         InlineKeyboardButton(text='📁 Управление категориями', callback_data='admin_categories')
     )
     builder.row(
@@ -960,7 +1019,7 @@ def admin_panel_kb() -> InlineKeyboardMarkup:
     )
     builder.row(
         InlineKeyboardButton(text='⏳ Ожидающие заявки', callback_data='admin_pending'),
-                InlineKeyboardButton(text='🎁 Реферальная программа', callback_data='admin_referral')
+        InlineKeyboardButton(text='🎁 Реферальная программа', callback_data='admin_referral')
     )
     builder.row(
         InlineKeyboardButton(text='🔙 Главное меню', callback_data='main_menu')
@@ -968,14 +1027,14 @@ def admin_panel_kb() -> InlineKeyboardMarkup:
     return builder.as_markup()
 
 def admin_products_kb() -> InlineKeyboardMarkup:
-    """Клавиатура управления товарами"""
+    """Клавиатура управления аккаунтами"""
     builder = InlineKeyboardBuilder()
     builder.row(
-        InlineKeyboardButton(text='➕ Добавить товар', callback_data='admin_add_product'),
-        InlineKeyboardButton(text='🗑️ Удалить товар', callback_data='admin_delete_product')
+        InlineKeyboardButton(text='➕ Добавить аккаунт', callback_data='admin_add_product'),
+        InlineKeyboardButton(text='🗑️ Удалить аккаунт', callback_data='admin_delete_product')
     )
     builder.row(
-        InlineKeyboardButton(text='📋 Список товаров', callback_data='admin_list_products')
+        InlineKeyboardButton(text='📋 Список аккаунтов', callback_data='admin_list_products')
     )
     builder.row(
         InlineKeyboardButton(text='🔙 Назад', callback_data='admin_panel')
@@ -1017,7 +1076,7 @@ def admin_referral_kb() -> InlineKeyboardMarkup:
     return builder.as_markup()
 
 def admin_list_products_kb() -> InlineKeyboardMarkup:
-    """Клавиатура списка товаров"""
+    """Клавиатура списка аккаунтов"""
     builder = InlineKeyboardBuilder()
     builder.row(
         InlineKeyboardButton(text='🔙 Назад', callback_data='admin_products')
@@ -1041,14 +1100,13 @@ async def handle_start(message: Message, state: FSMContext):
         user_id = message.from_user.id
         username = message.from_user.username
         
-        # Проверяем наличие юзернейма
         if not username:
             warning_text = """⚠️ ВНИМАНИЕ!
 
 У вас не установлен username в Telegram.
 
 Это может привести к проблемам:
-1. Я не смогу связаться с вами для отправки товара
+1. Я не смогу связаться с вами для отправки аккаунта
 2. Администраторы не смогут уточнить детали заказа
 
 📌 Как установить username:
@@ -1062,14 +1120,11 @@ async def handle_start(message: Message, state: FSMContext):
             await message.answer(text=warning_text, reply_markup=main_menu_kb(user_id))
             return
         
-        # Проверяем подписку на канал
         is_subscribed = await check_subscription(user_id)
         
         if not is_subscribed:
-            # Сохраняем, что пользователь пытался зайти
             await state.update_data(pending_start=True)
             
-            # Показываем сообщение о необходимости подписки
             sub_text = f"""📢 Для доступа к боту необходимо подписаться на наш канал!
 
 👉 {config.REQUIRED_CHANNEL_URL}
@@ -1077,7 +1132,7 @@ async def handle_start(message: Message, state: FSMContext):
 На канале вы найдете:
 • Актуальные новости
 • Специальные предложения
-• Новые поступления товаров
+• Новые поступления аккаунтов
 
 После подписки нажмите кнопку "✅ Я подписался(ась)" для проверки."""
 
@@ -1094,31 +1149,27 @@ async def handle_start(message: Message, state: FSMContext):
             await message.answer(text=sub_text, reply_markup=builder.as_markup())
             return
         
-        # Если есть реферальный код в параметрах
         args = message.text.split()
         if len(args) > 1:
             referral_code = args[1]
             await process_referral(user_id, referral_code)
         
-        # Регистрируем пользователя
         user_data = db.get_user(user_id)
         user_data["is_subscribed"] = True
         user_data["subscription_checked_at"] = datetime.now().isoformat()
         db.save_users_data()
         
-        # Показываем информацию о реферальной программе
         ref_info = await get_referral_info(user_id)
         
-        # Показываем количество товаров в корзине
         cart_count = cart_manager.get_cart_items_count(user_id)
-        cart_info = f"\n🛒 Товаров в корзине: {cart_count}" if cart_count > 0 else ""
+        cart_info = f"\n🛒 Аккаунтов в корзине: {cart_count}" if cart_count > 0 else ""
         
-        welcome_text = f"""👋 Добро пожаловать, @{username}!{cart_info}
+        welcome_text = f"""👋 Добро пожаловать в магазин аккаунтов, @{username}!{cart_info}
 
 ✨ Возможности:
-• 🛒 Просмотр и покупка услуг
-• 🛍️ Корзина для покупки нескольких товаров
-• 💳 Оплата через Ozon (СБП/Карта)
+• 📱 Просмотр и покупка аккаунтов
+• 🛍️ Корзина для покупки нескольких аккаунтов
+• 💳 Разные способы оплаты (СБП, ЮMoney, USDT, TON)
 • ✅ Подтверждение заказов администраторами
 
 {ref_info}
@@ -1156,8 +1207,8 @@ async def handle_support_command(message: Message):
 
 💬 Мы поможем с:
 • Выбором и оформлением заказа
-• Оплатой товара
-• Получением товара
+• Оплатой аккаунтов
+• Получением аккаунтов
 • Возвратом средств
 • Техническими проблемами
 • Реферальной программой
@@ -1173,7 +1224,7 @@ async def handle_support_command(message: Message):
             )
         )
         builder.row(
-            InlineKeyboardButton(text='🛒 Посмотреть товары', callback_data='view_categories'),
+            InlineKeyboardButton(text='📱 Посмотреть аккаунты', callback_data='view_categories'),
             InlineKeyboardButton(text='🏠 Главное меню', callback_data='main_menu')
         )
         
@@ -1200,7 +1251,7 @@ async def handle_admin_command(message: Message):
         admin_text = """👨‍💼 Админ-панель
 
 Доступные команды:
-• /addproduct - Добавить новый товар
+• /addproduct - Добавить новый аккаунт
 • /addcategory <название> - Добавить категорию
 • /stats - Показать статистику
 • /referral_stats - Статистика рефералов
@@ -1238,14 +1289,14 @@ async def handle_main_menu(callback: CallbackQuery, state: FSMContext):
 
 @dp.callback_query(F.data == 'view_categories')
 async def handle_view_categories(callback: CallbackQuery):
-    """Показать список категорий"""
+    """Показать список категорий аккаунтов"""
     try:
         categories = db.get_categories()
         
         if not categories:
-            text = "📭 Категории пока отсутствуют"
+            text = "📭 Категории аккаунтов пока отсутствуют"
         else:
-            text = "📁 Выберите категорию:"
+            text = "📁 Выберите категорию аккаунтов:"
         
         await callback.message.edit_text(
             text=text,
@@ -1260,7 +1311,7 @@ async def handle_view_categories(callback: CallbackQuery):
 
 @dp.callback_query(F.data.startswith('category_'))
 async def handle_category_products(callback: CallbackQuery):
-    """Показать товары в выбранной категории"""
+    """Показать аккаунты в выбранной категории"""
     try:
         _, category_id_str = callback.data.split('_')
         category_id = int(category_id_str)
@@ -1270,15 +1321,15 @@ async def handle_category_products(callback: CallbackQuery):
         
         if not products:
             category_name = category.get('name', 'Неизвестно') if category else 'Неизвестно'
-            text = f"📭 В категории '{category_name}' пока нет товаров"
+            text = f"📭 В категории '{category_name}' пока нет аккаунтов"
         else:
             category_name = category.get('name', 'Неизвестно') if category else 'Неизвестно'
             items_per_page = 5
             total_pages = max(1, (len(products) + items_per_page - 1) // items_per_page)
             
-            text = f"🛒 Товары в категории '{category_name}':\n"
-            text += f"📄 Показано 1-{min(items_per_page, len(products))} из {len(products)} товаров\n\n"
-            text += "Выберите товар:"
+            text = f"📱 Аккаунты в категории '{category_name}':\n"
+            text += f"📄 Показано 1-{min(items_per_page, len(products))} из {len(products)} аккаунтов\n\n"
+            text += "Выберите аккаунт:"
         
         await callback.message.edit_text(
             text=text,
@@ -1288,210 +1339,293 @@ async def handle_category_products(callback: CallbackQuery):
     except ValueError:
         await callback.answer("Неверный ID категории", show_alert=True)
     except Exception as e:
-        print(f"Ошибка при загрузке товаров категории: {e}")
-        await callback.answer("Ошибка загрузки товаров", show_alert=True)
+        print(f"Ошибка при загрузке аккаунтов категории: {e}")
+        await callback.answer("Ошибка загрузки аккаунтов", show_alert=True)
     
     await callback.answer()
 
 @dp.callback_query(F.data.startswith('product_'))
-async def handle_product_detail(callback: CallbackQuery):
-    """Показать детали товара"""
+async def handle_product_detail(callback: CallbackQuery, state: FSMContext):
+    """Показать детали аккаунта"""
     try:
         _, product_id_str = callback.data.split('_')
         product_id = int(product_id_str)
         
         product = db.get_product(product_id)
         if not product:
-            await callback.answer("Товар не найден", show_alert=True)
+            await callback.answer("Аккаунт не найден", show_alert=True)
             return
         
         category = db.get_category(product["category_id"])
         
-        cart_count = cart_manager.get_cart_items_count(callback.from_user.id)
-        cart_info = f"\n🛒 Товаров в корзине: {cart_count}" if cart_count > 0 else ""
+        emoji = "📱"
+        if "Мьянма" in product['name']:
+            emoji = "🇲🇲"
+        elif "Турция" in product['name']:
+            emoji = "🇹🇷"
+        elif "Инстаграм" in product['name']:
+            emoji = "📸"
         
-        product_text = f"""📦 {product['name']}{cart_info}
+        cart_count = cart_manager.get_cart_items_count(callback.from_user.id)
+        cart_info = f"\n🛒 Аккаунтов в корзине: {cart_count}" if cart_count > 0 else ""
+        
+        stock_status = "✅ В наличии" if product.get('quantity', 9999) > 0 else "❌ Нет в наличии"
+        if product.get('quantity', 9999) < 10 and product.get('quantity', 9999) > 0:
+            stock_status = f"⚡️ Осталось всего: {product['quantity']} шт."
+        
+        product_text = f"""{emoji} **{product['name']}**{cart_info}
 
-💰 Цена: {product['price']:.2f}₽
-📝 Описание: {product.get('description', 'Нет описания')}
-📊 В наличии: {product.get('quantity', 9999)} шт.
-📁 Категория: {category.get('name', 'Не указана') if category else 'Не указана'}
+💰 **Цена:** {product['price']:.2f}₽
+📊 **Наличие:** {stock_status}
+📝 **Описание:** {product.get('description', 'Нет описания')}
+📁 **Категория:** {category.get('name', 'Не указана') if category else 'Не указана'}
+
+**Выберите количество для покупки:**
 """
+        
+        await state.clear()
         
         await callback.message.edit_text(
             text=product_text,
+            parse_mode='Markdown',
             reply_markup=product_detail_kb(product_id, product["category_id"])
         )
         
     except ValueError:
-        await callback.answer("Неверный ID товара", show_alert=True)
+        await callback.answer("Неверный ID аккаунта", show_alert=True)
     except Exception as e:
-        print(f"Ошибка при загрузке товара: {e}")
-        await callback.answer("Ошибка загрузки товара", show_alert=True)
+        print(f"Ошибка при загрузке аккаунта: {e}")
+        await callback.answer("Ошибка загрузки аккаунта", show_alert=True)
     
     await callback.answer()
 
-@dp.callback_query(F.data == 'referral_info')
-async def handle_referral_info(callback: CallbackQuery):
-    """Показывает информацию о реферальной программе"""
+# ==================== ОБРАБОТЧИКИ ВЫБОРА КОЛИЧЕСТВА ====================
+
+@dp.callback_query(F.data.startswith('qty_'))
+async def handle_quantity_selection(callback: CallbackQuery, state: FSMContext):
+    """Обработка выбора количества аккаунтов"""
     try:
-        user_id = callback.from_user.id
-        ref_info = await get_referral_info(user_id)
-        
-        builder = InlineKeyboardBuilder()
-        builder.row(
-            InlineKeyboardButton(text='📢 Пригласить друзей', callback_data='share_referral'),
-            InlineKeyboardButton(text='🔙 Главное меню', callback_data='main_menu')
-        )
-        
-        await callback.message.edit_text(
-            text=ref_info,
-            reply_markup=builder.as_markup(),
-            parse_mode='Markdown'
-        )
-        
-    except Exception as e:
-        print(f"Ошибка: {e}")
-        await callback.answer("Ошибка", show_alert=True)
-    
-    await callback.answer()
-
-@dp.callback_query(F.data == 'share_referral')
-async def handle_share_referral(callback: CallbackQuery):
-    """Поделиться реферальной ссылкой"""
-    try:
-        user_id = callback.from_user.id
-        user_data = db.get_user(user_id)
-        
-        bot_username = (await bot.get_me()).username
-        referral_link = f"https://t.me/{bot_username}?start={user_data['referral_code']}"
-        
-        share_text = f"""🎁 МОЯ РЕФЕРАЛЬНАЯ ССЫЛКА
-
-🔗 {referral_link}
-
-📋 Отправьте эту ссылку друзьям!
-Когда они совершат первую покупку от {Config.REFERRAL_CONFIG['min_purchase_amount']}₽, вы получите награду!
-
-💡 Скопируйте ссылку и отправьте в личные сообщения или чаты."""
-
-        builder = InlineKeyboardBuilder()
-        builder.row(InlineKeyboardButton(
-            text='📋 Скопировать ссылку',
-            callback_data=f'copy_{referral_link}'
-        ))
-        builder.row(InlineKeyboardButton(
-            text='🔙 Назад',
-            callback_data='referral_info'
-        ))
-        
-        await callback.message.edit_text(
-            text=share_text,
-            reply_markup=builder.as_markup()
-        )
-        
-    except Exception as e:
-        print(f"Ошибка: {e}")
-        await callback.answer("Ошибка", show_alert=True)
-    
-    await callback.answer()
-
-@dp.callback_query(F.data.startswith('copy_'))
-async def handle_copy_link(callback: CallbackQuery):
-    """Обработка копирования ссылки"""
-    try:
-        link = callback.data.replace('copy_', '')
-        await callback.answer(f"Ссылка скопирована: {link}", show_alert=True)
-    except Exception as e:
-        print(f"Ошибка: {e}")
-        await callback.answer("Ошибка", show_alert=True)
-
-@dp.callback_query(F.data == 'check_subscription')
-async def handle_check_subscription(callback: CallbackQuery, state: FSMContext):
-    """Проверяет подписку пользователя"""
-    try:
-        user_id = callback.from_user.id
-        
-        is_subscribed = await check_subscription(user_id)
-        
-        if is_subscribed:
-            user_data = db.get_user(user_id)
-            user_data["is_subscribed"] = True
-            user_data["subscription_checked_at"] = datetime.now().isoformat()
-            db.save_users_data()
+        parts = callback.data.split('_')
+        if len(parts) == 3:  # qty_productId_quantity
+            _, product_id_str, quantity_str = parts
+            product_id = int(product_id_str)
+            quantity = int(quantity_str)
             
-            data = await state.get_data()
-            if data.get('pending_start'):
-                await state.clear()
-                # Создаем новое сообщение как при /start
-                await handle_start(callback.message, state)
-            else:
-                ref_info = await get_referral_info(user_id)
-                
-                await callback.message.edit_text(
-                    text=f"""✅ Спасибо за подписку!
-
-{ref_info}
-
-Теперь вы можете пользоваться ботом!""",
-                    reply_markup=main_menu_kb(user_id)
-                )
-        else:
-            await callback.answer(
-                "❌ Вы еще не подписались на канал! Подпишитесь и попробуйте снова.",
-                show_alert=True
+            product = db.get_product(product_id)
+            if not product:
+                await callback.answer("❌ Аккаунт не найден", show_alert=True)
+                return
+            
+            if quantity > product.get('quantity', 9999):
+                await callback.answer(f"❌ В наличии только {product.get('quantity', 0)} шт.", show_alert=True)
+                return
+            
+            await state.update_data(
+                product_id=product_id,
+                quantity=quantity,
+                product_name=product['name'],
+                product_price=product['price']
             )
             
+            total_amount = product['price'] * quantity
+            
+            await callback.message.edit_text(
+                text=f"""📱 {product['name']}
+
+✅ Выбрано: {quantity} шт.
+💰 Цена за 1 шт.: {product['price']:.2f}₽
+💵 Итого к оплате: {total_amount:.2f}₽
+
+Выберите способ оплаты:""",
+                reply_markup=payment_methods_kb(product_id, quantity, total_amount)
+            )
+            
+        elif len(parts) == 3 and parts[1] == 'custom':  # qty_custom_productId
+            _, _, product_id_str = parts
+            product_id = int(product_id_str)
+            
+            await state.set_state(PaymentStates.waiting_for_quantity)
+            await state.update_data(product_id=product_id)
+            
+            await callback.message.edit_text(
+                text="✏️ Введите нужное количество аккаунтов (число):",
+                reply_markup=cancel_kb()
+            )
+    
     except Exception as e:
-        print(f"Ошибка при проверке подписки: {e}")
-        await callback.answer("Ошибка при проверке", show_alert=True)
+        print(f"Ошибка при выборе количества: {e}")
+        await callback.answer("❌ Ошибка", show_alert=True)
     
     await callback.answer()
 
-@dp.callback_query(F.data == 'support')
-async def handle_support(callback: CallbackQuery):
-    """Обработка кнопки поддержки"""
+@dp.message(PaymentStates.waiting_for_quantity)
+async def handle_custom_quantity(message: Message, state: FSMContext):
+    """Обработка ввода пользовательского количества"""
     try:
-        user_id = callback.from_user.id
-        username = callback.from_user.username or callback.from_user.first_name
+        data = await state.get_data()
+        product_id = data.get('product_id')
         
-        support_text = f"""🆘 Поддержка
+        product = db.get_product(product_id)
+        if not product:
+            await message.answer("❌ Аккаунт не найден")
+            await state.clear()
+            return
+        
+        try:
+            quantity = int(message.text.strip())
+        except ValueError:
+            await message.answer(
+                "❌ Введите число!\nПример: 5",
+                reply_markup=cancel_kb()
+            )
+            return
+        
+        if quantity <= 0:
+            await message.answer(
+                "❌ Количество должно быть больше 0!",
+                reply_markup=cancel_kb()
+            )
+            return
+        
+        if quantity > product.get('quantity', 9999):
+            await message.answer(
+                f"❌ В наличии только {product.get('quantity', 0)} шт.",
+                reply_markup=cancel_kb()
+            )
+            return
+        
+        await state.update_data(
+            quantity=quantity,
+            product_name=product['name'],
+            product_price=product['price']
+        )
+        
+        total_amount = product['price'] * quantity
+        
+        await message.answer(
+            text=f"""📱 {product['name']}
 
-По всем вопросам обращайтесь:
-👨‍💼 Администратор: {config.ADMIN_USERNAME}
+✅ Выбрано: {quantity} шт.
+💰 Цена за 1 шт.: {product['price']:.2f}₽
+💵 Итого к оплате: {total_amount:.2f}₽
 
-🕐 Время ответа: 24/7
-💬 Мы поможем с:
-• Оформлением заказа
-• Оплатой товара
-• Получением товара
-• Техническими проблемами
-• Реферальной программой
+Выберите способ оплаты:""",
+            reply_markup=payment_methods_kb(product_id, quantity, total_amount)
+        )
+        
+        await state.set_state(PaymentStates.waiting_for_payment_method)
+        
+    except Exception as e:
+        print(f"Ошибка при вводе количества: {e}")
+        await message.answer("❌ Ошибка", reply_markup=main_menu_kb(message.from_user.id))
+        await state.clear()
 
-📝 Вы также можете написать напрямую администратору.
-Ваш ID для связи: {user_id}
+# ==================== ОБРАБОТЧИКИ ВЫБОРА ОПЛАТЫ ====================
+
+@dp.callback_query(F.data.startswith('pay_'))
+async def handle_payment_method(callback: CallbackQuery, state: FSMContext):
+    """Обработка выбора способа оплаты"""
+    try:
+        parts = callback.data.split('_')
+        if len(parts) != 4:
+            await callback.answer("❌ Неверный формат", show_alert=True)
+            return
+        
+        payment_method = parts[1]
+        product_id = int(parts[2])
+        quantity = int(parts[3])
+        
+        product = db.get_product(product_id)
+        if not product:
+            await callback.answer("❌ Аккаунт не найден", show_alert=True)
+            return
+        
+        total_amount = product['price'] * quantity
+        
+        await state.update_data(
+            product_id=product_id,
+            product_name=product['name'],
+            product_price=product['price'],
+            quantity=quantity,
+            total_amount=total_amount,
+            payment_method=payment_method
+        )
+        
+        payment_info = config.PAYMENT_DETAILS[payment_method]
+        
+        if payment_method == "sbp":
+            details_text = f"""💳 **СБП (Любой банк)**
+
+📱 **Номер телефона:** `{payment_info['phone_number']}`
+🏦 **Банк:** {payment_info['bank']}
+👤 **Получатель:** {payment_info['owner']}
+
+💡 **Как оплатить:**
+1. Откройте приложение вашего банка
+2. Выберите оплату по СБП (по номеру телефона)
+3. Введите сумму `{total_amount:.2f}₽`
+4. В комментарии укажите: `Заказ {callback.from_user.id}`"""
+        
+        elif payment_method == "yoomoney":
+            details_text = f"""💰 **ЮMoney**
+
+📱 **Кошелек:** `{payment_info['account']}`
+👤 **Получатель:** {payment_info['owner']}
+
+💡 **Как оплатить:**
+1. Переведите на указанный кошелек
+2. Сумма: `{total_amount:.2f}₽`
+3. В комментарии укажите: `Заказ {callback.from_user.id}`"""
+        
+        elif payment_method == "usdt":
+            details_text = f"""₿ **USDT (TRC-20)**
+
+📱 **Адрес:** `{payment_info['address']}`
+🌐 **Сеть:** {payment_info['network']}
+
+💡 **Как оплатить:**
+1. Отправьте USDT на указанный адрес
+2. Сумма: `{total_amount:.2f}₽` (по курсу)
+3. Обязательно используйте сеть TRC-20"""
+        
+        elif payment_method == "ton":
+            details_text = f"""💎 **TON Coin**
+
+📱 **Адрес:** `{payment_info['address']}`
+
+💡 **Как оплатить:**
+1. Отправьте TON на указанный адрес
+2. Сумма: `{total_amount:.2f}₽` (по курсу)
+3. Дождитесь подтверждения в сети"""
+        
+        else:
+            details_text = "❌ Неизвестный способ оплаты"
+        
+        payment_text = f"""🏦 **Оплата заказа**
+
+📱 **Аккаунт:** {product['name']}
+🔢 **Количество:** {quantity} шт.
+💰 **Цена за 1 шт.:** {product['price']:.2f}₽
+💵 **Итого:** {total_amount:.2f}₽
+
+{details_text}
+
+📸 **После оплаты отправьте скриншот чека в этот чат**
 """
         
-        builder = InlineKeyboardBuilder()
-        builder.row(
-            InlineKeyboardButton(
-                text='💬 Написать администратору',
-                url=f'https://t.me/{config.ADMIN_USERNAME.replace("@", "")}'
-            )
-        )
-        builder.row(
-            InlineKeyboardButton(text='🔙 Главное меню', callback_data='main_menu')
-        )
+        await state.set_state(PaymentStates.waiting_for_screenshot)
         
         await callback.message.edit_text(
-            text=support_text,
-            reply_markup=builder.as_markup(),
-            disable_web_page_preview=True
+            text=payment_text,
+            parse_mode='Markdown',
+            reply_markup=InlineKeyboardBuilder()
+                .add(InlineKeyboardButton(text='❌ Отменить', callback_data='main_menu'))
+                .as_markup()
         )
         
     except Exception as e:
-        print(f"Ошибка при обработке поддержки: {e}")
-        await callback.answer("Произошла ошибка", show_alert=True)
+        print(f"Ошибка при выборе оплаты: {e}")
+        await callback.answer("❌ Ошибка", show_alert=True)
     
     await callback.answer()
 
@@ -1507,9 +1641,9 @@ async def handle_view_cart(callback: CallbackQuery, state: FSMContext):
         
         if not cart:
             await callback.message.edit_text(
-                text="🛒 Ваша корзина пуста\n\nДобавьте товары из категорий!",
+                text="🛒 Ваша корзина пуста\n\nДобавьте аккаунты из категорий!",
                 reply_markup=InlineKeyboardBuilder()
-                    .add(InlineKeyboardButton(text='🛍️ Посмотреть товары', callback_data='view_categories'))
+                    .add(InlineKeyboardButton(text='📱 Посмотреть аккаунты', callback_data='view_categories'))
                     .add(InlineKeyboardButton(text='🏠 Главное меню', callback_data='main_menu'))
                     .adjust(1)
                     .as_markup()
@@ -1519,10 +1653,18 @@ async def handle_view_cart(callback: CallbackQuery, state: FSMContext):
         cart_text = "🛒 Ваша корзина:\n\n"
         
         for i, item_detail in enumerate(cart_total['items'], 1):
-            cart_text += f"{i}. {item_detail['name']}\n"
+            emoji = "📱"
+            if "Мьянма" in item_detail['name']:
+                emoji = "🇲🇲"
+            elif "Турция" in item_detail['name']:
+                emoji = "🇹🇷"
+            elif "Инстаграм" in item_detail['name']:
+                emoji = "📸"
+            
+            cart_text += f"{i}. {emoji} {item_detail['name']}\n"
             cart_text += f"   💰 {item_detail['price']:.2f}₽ × {item_detail['quantity']} = {item_detail['item_total']:.2f}₽\n\n"
         
-        cart_text += f"📦 Всего товаров: {cart_total['total_quantity']} шт.\n"
+        cart_text += f"📦 Всего аккаунтов: {cart_total['total_quantity']} шт.\n"
         cart_text += f"💸 Общая сумма: {cart_total['total_amount']:.2f}₽\n\n"
         cart_text += "Выберите действие:"
         
@@ -1538,53 +1680,6 @@ async def handle_view_cart(callback: CallbackQuery, state: FSMContext):
     
     await callback.answer()
 
-@dp.callback_query(F.data.startswith('add_to_cart_'))
-async def handle_add_to_cart(callback: CallbackQuery, state: FSMContext):
-    """Добавить товар в корзину"""
-    try:
-        product_id = int(callback.data.replace('add_to_cart_', ''))
-        
-        product = db.get_product(product_id)
-        if not product:
-            await callback.answer("Товар не найден", show_alert=True)
-            return
-        
-        if product.get('quantity', 9999) <= 0:
-            await callback.answer("❌ Товар закончился", show_alert=True)
-            return
-        
-        if cart_manager.add_to_cart(callback.from_user.id, product_id, 1):
-            product = db.get_product(product_id)
-            if product:
-                category = db.get_category(product["category_id"])
-                cart_count = cart_manager.get_cart_items_count(callback.from_user.id)
-                
-                product_text = f"""📦 {product['name']}
-
-💰 Цена: {product['price']:.2f}₽
-📝 Описание: {product.get('description', 'Нет описания')}
-📊 В наличии: {product.get('quantity', 9999)} шт.
-📁 Категория: {category.get('name', 'Не указана') if category else 'Не указана'}
-
-✅ Товар добавлен в корзину!
-🛒 Товаров в корзине: {cart_count}
-"""
-                
-                await callback.message.edit_text(
-                    text=product_text,
-                    reply_markup=product_detail_kb(product_id, product["category_id"])
-                )
-            
-            await callback.answer(f"✅ {product['name']} добавлен в корзину!")
-        else:
-            await callback.answer("❌ Ошибка при добавлении в корзину", show_alert=True)
-        
-    except Exception as e:
-        print(f"Ошибка при добавлении в корзину: {e}")
-        await callback.answer("❌ Ошибка", show_alert=True)
-    
-    await callback.answer()
-
 @dp.callback_query(F.data.startswith('cart_remove_'))
 async def handle_cart_remove(callback: CallbackQuery, state: FSMContext):
     """Удалить товар из корзины"""
@@ -1597,9 +1692,9 @@ async def handle_cart_remove(callback: CallbackQuery, state: FSMContext):
             
             if not cart:
                 await callback.message.edit_text(
-                    text="✅ Товар удален из корзины!\n\n🛒 Ваша корзина теперь пуста",
+                    text="✅ Аккаунт удален из корзины!\n\n🛒 Ваша корзина теперь пуста",
                     reply_markup=InlineKeyboardBuilder()
-                        .add(InlineKeyboardButton(text='🛍️ Посмотреть товары', callback_data='view_categories'))
+                        .add(InlineKeyboardButton(text='📱 Посмотреть аккаунты', callback_data='view_categories'))
                         .add(InlineKeyboardButton(text='🏠 Главное меню', callback_data='main_menu'))
                         .adjust(1)
                         .as_markup()
@@ -1608,10 +1703,18 @@ async def handle_cart_remove(callback: CallbackQuery, state: FSMContext):
                 cart_text = "🛒 Ваша корзина:\n\n"
                 
                 for i, item_detail in enumerate(cart_total['items'], 1):
-                    cart_text += f"{i}. {item_detail['name']}\n"
+                    emoji = "📱"
+                    if "Мьянма" in item_detail['name']:
+                        emoji = "🇲🇲"
+                    elif "Турция" in item_detail['name']:
+                        emoji = "🇹🇷"
+                    elif "Инстаграм" in item_detail['name']:
+                        emoji = "📸"
+                    
+                    cart_text += f"{i}. {emoji} {item_detail['name']}\n"
                     cart_text += f"   💰 {item_detail['price']:.2f}₽ × {item_detail['quantity']} = {item_detail['item_total']:.2f}₽\n\n"
                 
-                cart_text += f"📦 Всего товаров: {cart_total['total_quantity']} шт.\n"
+                cart_text += f"📦 Всего аккаунтов: {cart_total['total_quantity']} шт.\n"
                 cart_text += f"💸 Общая сумма: {cart_total['total_amount']:.2f}₽\n\n"
                 cart_text += "Выберите действие:"
                 
@@ -1620,9 +1723,9 @@ async def handle_cart_remove(callback: CallbackQuery, state: FSMContext):
                     reply_markup=cart_kb(cart)
                 )
             
-            await callback.answer("✅ Товар удален из корзины")
+            await callback.answer("✅ Аккаунт удален из корзины")
         else:
-            await callback.answer("❌ Товар не найден в корзине", show_alert=True)
+            await callback.answer("❌ Аккаунт не найден в корзине", show_alert=True)
         
     except Exception as e:
         print(f"Ошибка при удалении из корзины: {e}")
@@ -1638,7 +1741,7 @@ async def handle_cart_clear(callback: CallbackQuery, state: FSMContext):
             await callback.message.edit_text(
                 text="✅ Корзина очищена!",
                 reply_markup=InlineKeyboardBuilder()
-                    .add(InlineKeyboardButton(text='🛍️ Посмотреть товары', callback_data='view_categories'))
+                    .add(InlineKeyboardButton(text='📱 Посмотреть аккаунты', callback_data='view_categories'))
                     .add(InlineKeyboardButton(text='🏠 Главное меню', callback_data='main_menu'))
                     .adjust(1)
                     .as_markup()
@@ -1689,53 +1792,53 @@ async def handle_cart_checkout(callback: CallbackQuery, state: FSMContext):
             await callback.answer("❌ Корзина пуста", show_alert=True)
             return
         
-        await state.set_state(PaymentStates.waiting_for_screenshot)
+        await state.set_state(PaymentStates.waiting_for_payment_method)
         
         order_id = f"CART_{user_id}_{int(datetime.now().timestamp())}"
-        
-        payment_info = config.PAYMENT_DETAILS["ozon"]
         
         await state.update_data(
             user_id=user_id,
             username=username,
             order_id=order_id,
-            payment_method='ozon',
-            payment_name=payment_info['name'],
             cart_total=cart_total,
             is_cart_order=True
         )
         
         cart_items_text = ""
         for item in cart_total['items']:
-            cart_items_text += f"• {item['name']} x{item['quantity']} = {item['item_total']:.2f}₽\n"
+            emoji = "📱"
+            if "Мьянма" in item['name']:
+                emoji = "🇲🇲"
+            elif "Турция" in item['name']:
+                emoji = "🇹🇷"
+            elif "Инстаграм" in item['name']:
+                emoji = "📸"
+            
+            cart_items_text += f"{emoji} {item['name']} x{item['quantity']} = {item['item_total']:.2f}₽\n"
         
-        payment_text = f"""🏦 Оплата через {payment_info['name']}
+        payment_text = f"""🛒 **Оформление заказа из корзины**
 
-🛒 Ваш заказ из корзины:
 {cart_items_text}
-📦 Всего товаров: {cart_total['total_quantity']} шт.
+📦 Всего аккаунтов: {cart_total['total_quantity']} шт.
 💰 Общая сумма: {cart_total['total_amount']:.2f}₽
 
 👤 Ваш username: @{username}
 
-💳 Номер карты для перевода:
-{payment_info['card_number']}
-
-📱 Номер телефона для СБП:
-{payment_info['phone_number']}
-
-👤 Получатель:
-{payment_info['owner']}
-
-📝 В комментарии к переводу укажите:
-Заказ {order_id}
-
-📸 После оплаты отправьте скриншот чека в этот чат
+**Выберите способ оплаты:**
 """
+        
+        # Создаем клавиатуру с методами оплаты для корзины
+        builder = InlineKeyboardBuilder()
+        builder.row(InlineKeyboardButton(text='💳 СБП (Любой банк)', callback_data='cart_pay_sbp'))
+        builder.row(InlineKeyboardButton(text='💰 ЮMoney', callback_data='cart_pay_yoomoney'))
+        builder.row(InlineKeyboardButton(text='₿ USDT (TRC-20)', callback_data='cart_pay_usdt'))
+        builder.row(InlineKeyboardButton(text='💎 TON Coin', callback_data='cart_pay_ton'))
+        builder.row(InlineKeyboardButton(text='🔙 Назад в корзину', callback_data='view_cart'))
         
         await callback.message.edit_text(
             text=payment_text,
-            reply_markup=cart_checkout_kb()
+            parse_mode='Markdown',
+            reply_markup=builder.as_markup()
         )
         
     except Exception as e:
@@ -1745,9 +1848,102 @@ async def handle_cart_checkout(callback: CallbackQuery, state: FSMContext):
     
     await callback.answer()
 
+@dp.callback_query(F.data.startswith('cart_pay_'))
+async def handle_cart_payment_method(callback: CallbackQuery, state: FSMContext):
+    """Обработка выбора способа оплаты для корзины"""
+    try:
+        payment_method = callback.data.replace('cart_pay_', '')
+        
+        data = await state.get_data()
+        cart_total = data.get('cart_total')
+        username = data.get('username')
+        user_id = data.get('user_id')
+        order_id = data.get('order_id')
+        
+        await state.update_data(payment_method=payment_method)
+        
+        payment_info = config.PAYMENT_DETAILS[payment_method]
+        
+        if payment_method == "sbp":
+            details_text = f"""💳 **СБП (Любой банк)**
+
+📱 **Номер телефона:** `{payment_info['phone_number']}`
+🏦 **Банк:** {payment_info['bank']}
+👤 **Получатель:** {payment_info['owner']}
+
+💡 **Как оплатить:**
+1. Откройте приложение вашего банка
+2. Выберите оплату по СБП (по номеру телефона)
+3. Введите сумму `{cart_total['total_amount']:.2f}₽`
+4. В комментарии укажите: `Заказ {order_id}`"""
+        
+        elif payment_method == "yoomoney":
+            details_text = f"""💰 **ЮMoney**
+
+📱 **Кошелек:** `{payment_info['account']}`
+👤 **Получатель:** {payment_info['owner']}
+
+💡 **Как оплатить:**
+1. Переведите на указанный кошелек
+2. Сумма: `{cart_total['total_amount']:.2f}₽`
+3. В комментарии укажите: `Заказ {order_id}`"""
+        
+        elif payment_method == "usdt":
+            details_text = f"""₿ **USDT (TRC-20)**
+
+📱 **Адрес:** `{payment_info['address']}`
+🌐 **Сеть:** {payment_info['network']}
+
+💡 **Как оплатить:**
+1. Отправьте USDT на указанный адрес
+2. Сумма: `{cart_total['total_amount']:.2f}₽` (по курсу)
+3. Обязательно используйте сеть TRC-20"""
+        
+        elif payment_method == "ton":
+            details_text = f"""💎 **TON Coin**
+
+📱 **Адрес:** `{payment_info['address']}`
+
+💡 **Как оплатить:**
+1. Отправьте TON на указанный адрес
+2. Сумма: `{cart_total['total_amount']:.2f}₽` (по курсу)
+3. Дождитесь подтверждения в сети"""
+        
+        else:
+            details_text = "❌ Неизвестный способ оплаты"
+        
+        payment_text = f"""🏦 **Оплата заказа из корзины**
+
+🛒 Состав заказа:
+{chr(10).join([f"• {item['name']} x{item['quantity']} = {item['item_total']:.2f}₽" for item in cart_total['items']])}
+
+📦 Всего аккаунтов: {cart_total['total_quantity']} шт.
+💰 **Итого к оплате:** {cart_total['total_amount']:.2f}₽
+
+{details_text}
+
+📸 **После оплаты отправьте скриншот чека в этот чат**
+"""
+        
+        await state.set_state(PaymentStates.waiting_for_screenshot)
+        
+        await callback.message.edit_text(
+            text=payment_text,
+            parse_mode='Markdown',
+            reply_markup=InlineKeyboardBuilder()
+                .add(InlineKeyboardButton(text='❌ Отменить', callback_data='main_menu'))
+                .as_markup()
+        )
+        
+    except Exception as e:
+        print(f"Ошибка при выборе оплаты для корзины: {e}")
+        await callback.answer("❌ Ошибка", show_alert=True)
+    
+    await callback.answer()
+
 @dp.callback_query(F.data == 'cart_edit_quantity')
 async def handle_cart_edit_quantity(callback: CallbackQuery, state: FSMContext):
-    """Редактирование количества товаров в корзине"""
+    """Редактирование количества аккаунтов в корзине"""
     try:
         user_id = callback.from_user.id
         cart = cart_manager.get_cart(user_id)
@@ -1777,7 +1973,7 @@ async def handle_cart_edit_quantity(callback: CallbackQuery, state: FSMContext):
         
         await state.set_state(CartStates.waiting_for_quantity)
         await callback.message.edit_text(
-            text="✏️ Редактирование количества\n\nВыберите товар, количество которого хотите изменить:",
+            text="✏️ Редактирование количества\n\nВыберите аккаунт, количество которого хотите изменить:",
             reply_markup=builder.as_markup()
         )
         
@@ -1789,7 +1985,7 @@ async def handle_cart_edit_quantity(callback: CallbackQuery, state: FSMContext):
 
 @dp.callback_query(F.data.startswith('cart_edit_'))
 async def handle_cart_edit_item(callback: CallbackQuery, state: FSMContext):
-    """Выбор товара для редактирования количества"""
+    """Выбор аккаунта для редактирования количества"""
     try:
         product_id = int(callback.data.replace('cart_edit_', ''))
         
@@ -1799,7 +1995,7 @@ async def handle_cart_edit_item(callback: CallbackQuery, state: FSMContext):
         if product:
             product_name = product['name']
         else:
-            product_name = "Товар"
+            product_name = "Аккаунт"
         
         cart = cart_manager.get_cart(callback.from_user.id)
         current_qty = 1
@@ -1809,7 +2005,7 @@ async def handle_cart_edit_item(callback: CallbackQuery, state: FSMContext):
                 break
         
         await callback.message.edit_text(
-            text=f"✏️ Введите новое количество для товара:\n"
+            text=f"✏️ Введите новое количество для аккаунта:\n"
                  f"📦 {product_name}\n\n"
                  f"Текущее количество: {current_qty}\n\n"
                  f"Введите число:",
@@ -1819,378 +2015,161 @@ async def handle_cart_edit_item(callback: CallbackQuery, state: FSMContext):
         )
         
     except Exception as e:
-        print(f"Ошибка при выборе товара для редактирования: {e}")
+        print(f"Ошибка при выборе аккаунта для редактирования: {e}")
         await callback.answer("❌ Ошибка", show_alert=True)
     
     await callback.answer()
 
-# ==================== ОБРАБОТКА ПОКУПКИ ТОВАРА ====================
+# ==================== ОБРАБОТЧИКИ РЕФЕРАЛОВ ====================
 
-@dp.callback_query(F.data.startswith('buy_product_'))
-async def handle_buy_product(callback: CallbackQuery, state: FSMContext):
-    """Обработать покупку товара"""
+@dp.callback_query(F.data == 'referral_info')
+async def handle_referral_info(callback: CallbackQuery):
+    """Показывает информацию о реферальной программе"""
     try:
-        print(f"DEBUG: Начало обработки покупки: {callback.data}")
-        
-        username = callback.from_user.username
         user_id = callback.from_user.id
+        ref_info = await get_referral_info(user_id)
         
-        if not username:
-            print(f"DEBUG: У пользователя {user_id} нет username")
-            
-            error_text = """⚠️ У вас не установлен username!
-
-Для оформления заказа необходимо:
-1. Установить username в настройках Telegram
-2. Нажать /start в этом боте
-3. Повторить покупку
-
-📌 Как установить username:
-1. Откройте Настройки Telegram
-2. Выберите "Имя пользователя" (Username)
-3. Установите уникальное имя
-4. Сохраните изменения
-
-После установки username нажмите /start и попробуйте снова."""
-            
-            builder = InlineKeyboardBuilder()
-            builder.row(InlineKeyboardButton(text='🚀 Начать заново (/start)', callback_data='force_start'))
-            
-            await callback.message.edit_text(text=error_text, reply_markup=builder.as_markup())
-            await callback.answer("❌ Установите username для покупки", show_alert=True)
-            return
-        
-        parts = callback.data.split('_')
-        print(f"DEBUG: parts = {parts}")
-        
-        if len(parts) != 3:
-            print(f"DEBUG: Неверный формат callback_data: {callback.data}")
-            await callback.answer("❌ Неверный формат запроса", show_alert=True)
-            return
-            
-        product_id_str = parts[2]
-        print(f"DEBUG: product_id_str = {product_id_str}")
-        
-        try:
-            product_id = int(product_id_str)
-        except ValueError:
-            print(f"DEBUG: Не удалось преобразовать '{product_id_str}' в число")
-            await callback.answer("❌ Неверный ID товара", show_alert=True)
-            return
-            
-        print(f"DEBUG: ID товара: {product_id}")
-        
-        product = db.get_product(product_id)
-        print(f"DEBUG: Найден товар: {product}")
-        
-        if not product:
-            print("DEBUG: ❌ Товар не найден в базе")
-            await callback.answer("Товар не найден", show_alert=True)
-            return
-        
-        quantity = product.get('quantity', 9999)
-        print(f"DEBUG: Количество товара: {quantity}")
-        
-        if quantity <= 0:
-            print("DEBUG: ❌ Товар закончился")
-            await callback.answer("❌ Товар закончился", show_alert=True)
-            return
-        
-        order_id = f"ORD_{user_id}_{int(datetime.now().timestamp())}"
-        print(f"DEBUG: Сгенерирован order_id: {order_id}")
-        
-        payment_info = config.PAYMENT_DETAILS["ozon"]
-        
-        try:
-            if isinstance(product.get('price'), (int, float)):
-                product_price = float(product['price'])
-            elif isinstance(product.get('price'), str):
-                price_str = product['price'].replace('₽', '').replace('руб', '').replace(' ', '').strip()
-                product_price = float(price_str)
-            else:
-                print(f"DEBUG: Неизвестный формат цены: {product.get('price')}")
-                product_price = 0.0
-        except (ValueError, TypeError) as e:
-            print(f"DEBUG: Ошибка при обработке цены: {e}")
-            product_price = 0.0
-            
-        print(f"DEBUG: Цена товара: {product_price}")
-        print(f"DEBUG: Username пользователя: @{username}")
-        
-        await state.set_state(PaymentStates.waiting_for_screenshot)
-        print("DEBUG: Установлено состояние ожидания скриншота")
-        
-        await state.update_data(
-            user_id=user_id,
-            username=username,
-            product_id=product_id,
-            product_name=product['name'],
-            product_price=product_price,
-            order_id=order_id,
-            payment_method='ozon',
-            payment_name=payment_info['name']
+        builder = InlineKeyboardBuilder()
+        builder.row(
+            InlineKeyboardButton(text='📢 Пригласить друзей', callback_data='share_referral'),
+            InlineKeyboardButton(text='🔙 Главное меню', callback_data='main_menu')
         )
-        print("DEBUG: Данные сохранены в state")
-        
-        payment_text = f"""🏦 Оплата через {payment_info['name']}
-
-📦 Товар: {product['name']}
-💰 Сумма к оплате: {product_price:.2f}₽
-👤 Ваш username: @{username}
-
-💳 Номер карты для перевода:
-{payment_info['card_number']}
-
-📱 Номер телефона для СБП:
-{payment_info['phone_number']}
-
-👤 Получатель:
-{payment_info['owner']}
-
-📝 В комментарии к переводу укажите:
-Заказ {order_id}
-
-📸 После оплаты отправьте скриншот чека в этот чат
-"""
         
         await callback.message.edit_text(
-            text=payment_text,
-            reply_markup=cancel_kb()
+            text=ref_info,
+            reply_markup=builder.as_markup(),
+            parse_mode='Markdown'
         )
-        print("DEBUG: Сообщение с инструкцией отправлено")
         
-    except ValueError as e:
-        print(f"ERROR: ValueError при обработке покупки: {e}")
-        print(f"ERROR: Traceback: {traceback.format_exc()}")
-        await callback.answer("❌ Ошибка при обработке заказа", show_alert=True)
-        await state.clear()
-    except Exception as e:
-        print(f"ERROR: Общая ошибка при покупке товара: {e}")
-        print(f"ERROR: Traceback: {traceback.format_exc()}")
-        await callback.answer("❌ Ошибка при покупке", show_alert=True)
-        await state.clear()
-    
-    await callback.answer()
-
-# ==================== ОБРАБОТКА СКРИНШОТОВ ====================
-
-@dp.message(PaymentStates.waiting_for_screenshot, F.photo)
-async def handle_payment_screenshot(message: Message, state: FSMContext):
-    """Обработать полученный скриншот оплаты"""
-    try:
-        file_id = message.photo[-1].file_id
-        
-        data = await state.get_data()
-        
-        is_cart_order = data.get('is_cart_order', False)
-        
-        await state.clear()
-        
-        if is_cart_order:
-            await _process_cart_purchase_screenshot(message, data, file_id)
-        else:
-            await _process_purchase_screenshot(message, data, file_id)
-        
-    except Exception as e:
-        print(f"Ошибка при обработке скриншота: {e}")
-        await message.answer(
-            text="❌ Ошибка при обработке скриншота",
-            reply_markup=main_menu_kb(message.from_user.id)
-        )
-        await state.clear()
-
-async def _process_purchase_screenshot(message: Message, data: dict, file_id: str):
-    """Обработать скриншот оплаты заказа (обновленная версия с рефералами)"""
-    try:
-        user_id = data.get('user_id')
-        username = data.get('username')
-        payment_name = data.get('payment_name')
-        order_id = data.get('order_id')
-        
-        try:
-            product_price = float(data.get('product_price', 0))
-        except (ValueError, TypeError) as e:
-            print(f"ERROR: Ошибка преобразования цены: {e}")
-            product_price = 0.0
-            
-        product_name = data.get('product_name', 'Неизвестный товар')
-        
-        print(f"DEBUG: Обработка скриншота для заказа {order_id}")
-        
-        order_data = {
-            'user_id': user_id,
-            'username': username,
-            'order_id': order_id,
-            'total': product_price,
-            'product_name': product_name,
-            'product_price': product_price,
-            'payment_method': payment_name
-        }
-        
-        result = await send_to_order_channel(order_data, file_id)
-        
-        if result is None:
-            error_text = """❌ Не удалось отправить заявку.
-
-Возможные причины:
-1. Бот не добавлен в канал заказов
-2. У бота нет прав на отправку сообщений в канал
-3. Технические проблемы с Telegram
-
-Пожалуйста, обратитесь к администратору: @koliin98
-"""
-            await message.answer(text=error_text, reply_markup=main_menu_kb(user_id))
-            return
-        
-        try:
-            db.update_user_stats(user_id, product_price)
-            print(f"DEBUG: Статистика пользователя {user_id} обновлена")
-        except Exception as e:
-            print(f"ERROR: Ошибка обновления статистики: {e}")
-        
-        # Проверяем реферальные награды
-        user_data = db.get_user(user_id)
-        referred_by = user_data.get('referred_by')
-        
-        reward_text = ""
-        if referred_by:
-            await check_referral_qualification(referred_by, product_price)
-        
-        reward_result = await apply_referral_reward(user_id, product_price)
-        if reward_result.get('applied'):
-            reward_text = f"\n\n🎁 Применена награда: {reward_result['reward_description']}!\nОсталось наград: {reward_result['remaining_rewards']}"
-        
-        success_text = f"""✅ Заказ оформлен!
-
-🆔 Номер заказа: {order_id}
-📦 Товар: {product_name}
-💰 Сумма: {product_price:.2f}₽
-💳 Способ оплаты: {payment_name}
-
-📋 Заказ отправлен на обработку.
-Мы свяжемся с вами в ближайшее время.{reward_text}
-"""
-        
-        await message.answer(text=success_text, reply_markup=main_menu_kb(user_id))
-        print(f"DEBUG: Пользователь уведомлен об успешной отправке")
-        
-    except Exception as e:
-        print(f"❌ Ошибка при обработке скриншота заказа: {e}")
-        import traceback
-        print(f"❌ Трассировка ошибки:\n{traceback.format_exc()}")
-        
-        error_text = f"""❌ Ошибка при обработке заказа
-
-Произошла техническая ошибка.
-Пожалуйста, обратитесь к администратору: @koliin98
-
-Ошибка: {str(e)}
-"""
-        await message.answer(text=error_text, reply_markup=main_menu_kb(message.from_user.id))
-
-async def _process_cart_purchase_screenshot(message: Message, data: dict, file_id: str):
-    """Обработать скриншот оплаты заказа из корзины (обновленная версия с рефералами)"""
-    try:
-        user_id = data.get('user_id')
-        username = data.get('username')
-        payment_name = data.get('payment_name')
-        order_id = data.get('order_id')
-        cart_total = data.get('cart_total', {})
-        
-        print(f"DEBUG: Обработка заказа из корзины {order_id}")
-        
-        order_data = {
-            'user_id': user_id,
-            'username': username,
-            'order_id': order_id,
-            'cart_total': cart_total,
-            'total': cart_total.get('total_amount', 0),
-            'payment_method': payment_name,
-            'is_cart_order': True
-        }
-        
-        result = await send_cart_to_order_channel(order_data, file_id)
-        
-        if result is None:
-            error_text = """❌ Не удалось отправить заявку.
-
-Возможные причины:
-1. Бот не добавлен в канал заказов
-2. У бота нет прав на отправку сообщений в канал
-3. Технические проблемы с Telegram
-
-Пожалуйста, обратитесь к администратору: @koliin98
-"""
-            await message.answer(text=error_text, reply_markup=main_menu_kb(user_id))
-            return
-        
-        total_amount = cart_total.get('total_amount', 0)
-        
-        try:
-            db.update_user_stats(user_id, total_amount)
-            print(f"DEBUG: Статистика пользователя {user_id} обновлена")
-        except Exception as e:
-            print(f"ERROR: Ошибка обновления статистики: {e}")
-        
-        # Проверяем реферальные награды
-        user_data = db.get_user(user_id)
-        referred_by = user_data.get('referred_by')
-        
-        reward_text = ""
-        if referred_by:
-            await check_referral_qualification(referred_by, total_amount)
-        
-        reward_result = await apply_referral_reward(user_id, total_amount)
-        if reward_result.get('applied'):
-            reward_text = f"\n\n🎁 Применена награда: {reward_result['reward_description']}!\nОсталось наград: {reward_result['remaining_rewards']}"
-        
-        cart_manager.clear_cart(user_id)
-        
-        items_text = ""
-        for item in cart_total.get('items', []):
-            items_text += f"• {item['name']} x{item['quantity']} = {item['item_total']:.2f}₽\n"
-        
-        success_text = f"""✅ Заказ из корзины оформлен!
-
-🆔 Номер заказа: {order_id}
-🛒 Состав заказа:
-{items_text}
-📦 Всего товаров: {cart_total.get('total_quantity', 0)} шт.
-💰 Общая сумма: {total_amount:.2f}₽
-💳 Способ оплаты: {payment_name}
-
-📋 Заказ отправлен на обработку.
-Мы свяжемся с вами в ближайшее время.{reward_text}
-"""
-        
-        await message.answer(text=success_text, reply_markup=main_menu_kb(user_id))
-        print(f"DEBUG: Пользователь уведомлен об успешной отправке заказа из корзины")
-        
-    except Exception as e:
-        print(f"❌ Ошибка при обработке скриншота заказа из корзины: {e}")
-        import traceback
-        print(f"❌ Трассировка ошибки:\n{traceback.format_exc()}")
-        
-        error_text = f"""❌ Ошибка при обработке заказа
-
-Произошла техническая ошибка.
-Пожалуйста, обратитесь к администратору: @koliin98
-
-Ошибка: {str(e)}
-"""
-        await message.answer(text=error_text, reply_markup=main_menu_kb(message.from_user.id))
-
-@dp.callback_query(F.data == 'cart_confirm_payment')
-async def handle_cart_confirm_payment(callback: CallbackQuery, state: FSMContext):
-    """Подтверждение оплаты из корзины"""
-    try:
-        await callback.message.edit_text(
-            text="📸 Отправьте скриншот оплаты в этот чат",
-            reply_markup=cancel_kb()
-        )
     except Exception as e:
         print(f"Ошибка: {e}")
         await callback.answer("Ошибка", show_alert=True)
+    
+    await callback.answer()
+
+@dp.callback_query(F.data == 'share_referral')
+async def handle_share_referral(callback: CallbackQuery):
+    """Поделиться реферальной ссылкой"""
+    try:
+        user_id = callback.from_user.id
+        user_data = db.get_user(user_id)
+        
+        bot_username = (await bot.get_me()).username
+        referral_link = f"https://t.me/{bot_username}?start={user_data['referral_code']}"
+        
+        share_text = f"""🎁 МОЯ РЕФЕРАЛЬНАЯ ССЫЛКА
+
+🔗 {referral_link}
+
+📋 Отправьте эту ссылку друзьям!
+Когда они совершат первую покупку от {Config.REFERRAL_CONFIG['min_purchase_amount']}₽, вы получите награду!
+
+💡 Скопируйте ссылку и отправьте в личные сообщения или чаты."""
+
+        builder = InlineKeyboardBuilder()
+        builder.row(InlineKeyboardButton(text='🔙 Назад', callback_data='referral_info'))
+        
+        await callback.message.edit_text(
+            text=share_text,
+            reply_markup=builder.as_markup()
+        )
+        
+    except Exception as e:
+        print(f"Ошибка: {e}")
+        await callback.answer("Ошибка", show_alert=True)
+    
+    await callback.answer()
+
+# ==================== ОБРАБОТЧИКИ ПРОВЕРКИ ПОДПИСКИ ====================
+
+@dp.callback_query(F.data == 'check_subscription')
+async def handle_check_subscription(callback: CallbackQuery, state: FSMContext):
+    """Проверяет подписку пользователя"""
+    try:
+        user_id = callback.from_user.id
+        
+        is_subscribed = await check_subscription(user_id)
+        
+        if is_subscribed:
+            user_data = db.get_user(user_id)
+            user_data["is_subscribed"] = True
+            user_data["subscription_checked_at"] = datetime.now().isoformat()
+            db.save_users_data()
+            
+            data = await state.get_data()
+            if data.get('pending_start'):
+                await state.clear()
+                await handle_start(callback.message, state)
+            else:
+                ref_info = await get_referral_info(user_id)
+                
+                await callback.message.edit_text(
+                    text=f"""✅ Спасибо за подписку!
+
+{ref_info}
+
+Теперь вы можете пользоваться ботом!""",
+                    reply_markup=main_menu_kb(user_id)
+                )
+        else:
+            await callback.answer(
+                "❌ Вы еще не подписались на канал! Подпишитесь и попробуйте снова.",
+                show_alert=True
+            )
+            
+    except Exception as e:
+        print(f"Ошибка при проверке подписки: {e}")
+        await callback.answer("Ошибка при проверке", show_alert=True)
+    
+    await callback.answer()
+
+# ==================== ОБРАБОТЧИКИ ПОДДЕРЖКИ ====================
+
+@dp.callback_query(F.data == 'support')
+async def handle_support(callback: CallbackQuery):
+    """Обработка кнопки поддержки"""
+    try:
+        user_id = callback.from_user.id
+        username = callback.from_user.username or callback.from_user.first_name
+        
+        support_text = f"""🆘 Поддержка
+
+По всем вопросам обращайтесь:
+👨‍💼 Администратор: {config.ADMIN_USERNAME}
+
+🕐 Время ответа: 24/7
+💬 Мы поможем с:
+• Оформлением заказа
+• Оплатой аккаунтов
+• Получением аккаунтов
+• Техническими проблемами
+• Реферальной программой
+
+📝 Вы также можете написать напрямую администратору.
+Ваш ID для связи: {user_id}
+"""
+        
+        builder = InlineKeyboardBuilder()
+        builder.row(
+            InlineKeyboardButton(
+                text='💬 Написать администратору',
+                url=f'https://t.me/{config.ADMIN_USERNAME.replace("@", "")}'
+            )
+        )
+        builder.row(
+            InlineKeyboardButton(text='🔙 Главное меню', callback_data='main_menu')
+        )
+        
+        await callback.message.edit_text(
+            text=support_text,
+            reply_markup=builder.as_markup(),
+            disable_web_page_preview=True
+        )
+        
+    except Exception as e:
+        print(f"Ошибка при обработке поддержки: {e}")
+        await callback.answer("Произошла ошибка", show_alert=True)
+    
     await callback.answer()
 
 @dp.callback_query(F.data == 'force_start')
@@ -2226,19 +2205,19 @@ async def handle_force_start(callback: CallbackQuery, state: FSMContext):
         db.get_user(user_id)
         
         cart_count = cart_manager.get_cart_items_count(user_id)
-        cart_info = f"\n🛒 Товаров в корзине: {cart_count}" if cart_count > 0 else ""
+        cart_info = f"\n🛒 Аккаунтов в корзине: {cart_count}" if cart_count > 0 else ""
         
         welcome_text = f"""✅ Username обнаружен: @{username}{cart_info}
 
-👋 Добро пожаловать в магазин виртуальных услуг!
+👋 Добро пожаловать в магазин аккаунтов!
 
 ✨ Возможности:
-• 🛒 Просмотр и покупка услуг
-• 🛍️ Корзина для покупки нескольких товаров
-• 💳 Оплата через Ozon (СБП/Карта)
+• 📱 Просмотр и покупка аккаунтов
+• 🛍️ Корзина для покупки нескольких аккаунтов
+• 💳 Разные способы оплаты (СБП, ЮMoney, USDT, TON)
 • ✅ Подтверждение заказов администраторами
 
-Теперь вы можете покупать товары!"""
+Теперь вы можете покупать аккаунты!"""
         
         await callback.message.edit_text(
             text=welcome_text,
@@ -2250,6 +2229,214 @@ async def handle_force_start(callback: CallbackQuery, state: FSMContext):
         await callback.answer("Ошибка", show_alert=True)
     
     await callback.answer()
+
+# ==================== ОБРАБОТКА СКРИНШОТОВ ====================
+
+@dp.message(PaymentStates.waiting_for_screenshot, F.photo)
+async def handle_payment_screenshot(message: Message, state: FSMContext):
+    """Обработать полученный скриншот оплаты"""
+    try:
+        file_id = message.photo[-1].file_id
+        
+        data = await state.get_data()
+        
+        is_cart_order = data.get('is_cart_order', False)
+        
+        if is_cart_order:
+            await _process_cart_purchase_screenshot(message, data, file_id)
+        else:
+            await _process_single_purchase_screenshot(message, data, file_id)
+        
+    except Exception as e:
+        print(f"Ошибка при обработке скриншота: {e}")
+        await message.answer(
+            text="❌ Ошибка при обработке скриншота",
+            reply_markup=main_menu_kb(message.from_user.id)
+        )
+        await state.clear()
+
+async def _process_single_purchase_screenshot(message: Message, data: dict, file_id: str):
+    """Обработать скриншот оплаты для одного аккаунта"""
+    try:
+        user_id = message.from_user.id
+        username = message.from_user.username
+        
+        product_id = data.get('product_id')
+        product_name = data.get('product_name')
+        product_price = data.get('product_price')
+        quantity = data.get('quantity', 1)
+        total_amount = data.get('total_amount')
+        payment_method = data.get('payment_method')
+        
+        order_id = f"ACC_{user_id}_{int(datetime.now().timestamp())}"
+        
+        order_data = {
+            'user_id': user_id,
+            'username': username,
+            'order_id': order_id,
+            'total': total_amount,
+            'product_name': product_name,
+            'product_price': product_price,
+            'quantity': quantity,
+            'payment_method': payment_method
+        }
+        
+        result = await send_to_order_channel(order_data, file_id)
+        
+        if result is None:
+            error_text = """❌ Не удалось отправить заявку.
+
+Возможные причины:
+1. Бот не добавлен в канал заказов
+2. У бота нет прав на отправку сообщений в канал
+3. Технические проблемы с Telegram
+
+Пожалуйста, обратитесь к администратору: @koliin98
+"""
+            await message.answer(text=error_text, reply_markup=main_menu_kb(user_id))
+            return
+        
+        db.update_user_stats(user_id, total_amount)
+        
+        user_data = db.get_user(user_id)
+        referred_by = user_data.get('referred_by')
+        
+        reward_text = ""
+        if referred_by:
+            await check_referral_qualification(referred_by, total_amount)
+        
+        reward_result = await apply_referral_reward(user_id, total_amount)
+        if reward_result.get('applied'):
+            reward_text = f"\n\n🎁 Применена награда: {reward_result['reward_description']}!\nОсталось наград: {reward_result['remaining_rewards']}"
+        
+        payment_names = {
+            "sbp": "СБП (Любой банк)",
+            "yoomoney": "ЮMoney",
+            "usdt": "USDT (TRC-20)",
+            "ton": "TON Coin"
+        }
+        payment_name = payment_names.get(payment_method, payment_method)
+        
+        success_text = f"""✅ Заказ оформлен!
+
+🆔 Номер заказа: {order_id}
+📱 Аккаунт: {product_name}
+🔢 Количество: {quantity} шт.
+💰 Сумма: {total_amount:.2f}₽
+💳 Способ оплаты: {payment_name}
+
+📋 Заказ отправлен на обработку.
+Мы свяжемся с вами в ближайшее время для отправки аккаунтов.{reward_text}
+"""
+        
+        await message.answer(text=success_text, reply_markup=main_menu_kb(user_id))
+        await state.clear()
+        
+    except Exception as e:
+        print(f"❌ Ошибка при обработке скриншота: {e}")
+        await message.answer(
+            text="❌ Ошибка при обработке заказа. Обратитесь к администратору.",
+            reply_markup=main_menu_kb(message.from_user.id)
+        )
+        await state.clear()
+
+async def _process_cart_purchase_screenshot(message: Message, data: dict, file_id: str):
+    """Обработать скриншот оплаты для заказа из корзины"""
+    try:
+        user_id = message.from_user.id
+        username = message.from_user.username
+        
+        order_id = data.get('order_id')
+        cart_total = data.get('cart_total')
+        payment_method = data.get('payment_method')
+        
+        if not order_id:
+            order_id = f"CART_{user_id}_{int(datetime.now().timestamp())}"
+        
+        order_data = {
+            'user_id': user_id,
+            'username': username,
+            'order_id': order_id,
+            'cart_total': cart_total,
+            'total': cart_total.get('total_amount', 0),
+            'payment_method': payment_method,
+            'is_cart_order': True
+        }
+        
+        result = await send_cart_to_order_channel(order_data, file_id)
+        
+        if result is None:
+            error_text = """❌ Не удалось отправить заявку.
+
+Возможные причины:
+1. Бот не добавлен в канал заказов
+2. У бота нет прав на отправку сообщений в канал
+3. Технические проблемы с Telegram
+
+Пожалуйста, обратитесь к администратору: @koliin98
+"""
+            await message.answer(text=error_text, reply_markup=main_menu_kb(user_id))
+            return
+        
+        total_amount = cart_total.get('total_amount', 0)
+        db.update_user_stats(user_id, total_amount)
+        
+        user_data = db.get_user(user_id)
+        referred_by = user_data.get('referred_by')
+        
+        reward_text = ""
+        if referred_by:
+            await check_referral_qualification(referred_by, total_amount)
+        
+        reward_result = await apply_referral_reward(user_id, total_amount)
+        if reward_result.get('applied'):
+            reward_text = f"\n\n🎁 Применена награда: {reward_result['reward_description']}!\nОсталось наград: {reward_result['remaining_rewards']}"
+        
+        cart_manager.clear_cart(user_id)
+        
+        payment_names = {
+            "sbp": "СБП (Любой банк)",
+            "yoomoney": "ЮMoney",
+            "usdt": "USDT (TRC-20)",
+            "ton": "TON Coin"
+        }
+        payment_name = payment_names.get(payment_method, payment_method)
+        
+        items_text = ""
+        for item in cart_total.get('items', []):
+            emoji = "📱"
+            if "Мьянма" in item['name']:
+                emoji = "🇲🇲"
+            elif "Турция" in item['name']:
+                emoji = "🇹🇷"
+            elif "Инстаграм" in item['name']:
+                emoji = "📸"
+            
+            items_text += f"{emoji} {item['name']} x{item['quantity']} = {item['item_total']:.2f}₽\n"
+        
+        success_text = f"""✅ Заказ из корзины оформлен!
+
+🆔 Номер заказа: {order_id}
+🛒 Состав заказа:
+{items_text}
+📦 Всего аккаунтов: {cart_total.get('total_quantity', 0)} шт.
+💰 Общая сумма: {total_amount:.2f}₽
+💳 Способ оплаты: {payment_name}
+
+📋 Заказ отправлен на обработку.
+Мы свяжемся с вами в ближайшее время для отправки аккаунтов.{reward_text}
+"""
+        
+        await message.answer(text=success_text, reply_markup=main_menu_kb(user_id))
+        await state.clear()
+        
+    except Exception as e:
+        print(f"❌ Ошибка при обработке скриншота корзины: {e}")
+        await message.answer(
+            text="❌ Ошибка при обработке заказа. Обратитесь к администратору.",
+            reply_markup=main_menu_kb(message.from_user.id)
+        )
+        await state.clear()
 
 # ==================== АДМИН-ПАНЕЛЬ ====================
 
@@ -2268,7 +2455,7 @@ async def handle_admin_panel(callback: CallbackQuery):
 📊 Быстрая статистика:
 • 🛒 Ожидающих заказов: {pending_orders}
 • 👥 Пользователей: {len(db.users)}
-• 📦 Товаров: {len(db.products)}
+• 📦 Аккаунтов: {len(db.products)}
 • 🛍️ Активных корзин: {len(cart_manager.carts)}
 
 Выберите раздел для управления:
@@ -2305,11 +2492,12 @@ async def handle_admin_pending(callback: CallbackQuery):
                 text += f"   👤 @{order_data.get('username', 'N/A')} ({order_data.get('user_id')})\n"
                 
                 if order_data.get('is_cart_order'):
-                    text += f"   🛍️ Заказ из корзины ({order_data.get('total_quantity', 0)} товаров)\n"
+                    text += f"   🛍️ Заказ из корзины ({order_data.get('total_quantity', 0)} аккаунтов)\n"
                 else:
-                    text += f"   📦 {order_data.get('product_name', 'Неизвестно')}\n"
+                    text += f"   📦 {order_data.get('product_name', 'Неизвестно')} x{order_data.get('quantity', 1)}\n"
                 
-                text += f"   💰 {order_data.get('total', 0)}₽\n\n"
+                text += f"   💰 {order_data.get('total', 0)}₽\n"
+                text += f"   💳 {order_data.get('payment_name', 'Неизвестно')}\n\n"
         
         builder = InlineKeyboardBuilder()
         builder.row(
@@ -2327,6 +2515,411 @@ async def handle_admin_pending(callback: CallbackQuery):
         await callback.answer("Ошибка", show_alert=True)
     
     await callback.answer()
+
+# ==================== ОБРАБОТЧИКИ ПОДТВЕРЖДЕНИЯ АДМИНИСТРАТОРОМ ====================
+
+@dp.callback_query(F.data.startswith('confirm_order_'))
+async def handle_confirm_order(callback: CallbackQuery):
+    """Подтвердить заказ администратором"""
+    try:
+        if callback.from_user.id not in config.ADMIN_IDS:
+            await callback.answer("⛔ Нет доступа", show_alert=True)
+            return
+        
+        order_id = callback.data.replace('confirm_order_', '')
+        
+        order_data = db.get_pending_order(order_id)
+        if not order_data:
+            await callback.answer("Заказ не найден", show_alert=True)
+            return
+        
+        user_id = order_data.get('user_id')
+        total_amount = order_data.get('total', 0)
+        admin_username = callback.from_user.username or callback.from_user.first_name
+        
+        is_cart_order = order_data.get('is_cart_order', False)
+        
+        if is_cart_order:
+            product_name = f"Заказ из корзины ({order_data.get('total_quantity', 0)} аккаунтов)"
+        else:
+            product_name = f"{order_data.get('product_name', 'Неизвестный аккаунт')} x{order_data.get('quantity', 1)}"
+        
+        db.remove_pending_order(order_id)
+        
+        try:
+            if callback.message.photo:
+                new_caption = callback.message.caption + f"\n\n✅ ПОДТВЕРЖДЕНО АДМИНИСТРАТОРОМ: @{admin_username}"
+                await bot.edit_message_caption(
+                    chat_id=callback.message.chat.id,
+                    message_id=callback.message.message_id,
+                    caption=new_caption,
+                    reply_markup=None
+                )
+            else:
+                new_text = callback.message.text + f"\n\n✅ ПОДТВЕРЖДЕНО АДМИНИСТРАТОРОМ: @{admin_username}"
+                await bot.edit_message_text(
+                    chat_id=callback.message.chat.id,
+                    message_id=callback.message.message_id,
+                    text=new_text,
+                    reply_markup=None
+                )
+        except Exception as e:
+            print(f"Ошибка обновления сообщения: {e}")
+        
+        try:
+            if is_cart_order:
+                cart_items_text = ""
+                cart_items = order_data.get('cart_items', [])
+                for item in cart_items:
+                    emoji = "📱"
+                    if "Мьянма" in item['name']:
+                        emoji = "🇲🇲"
+                    elif "Турция" in item['name']:
+                        emoji = "🇹🇷"
+                    elif "Инстаграм" in item['name']:
+                        emoji = "📸"
+                    
+                    cart_items_text += f"{emoji} {item['name']} x{item['quantity']}\n"
+                
+                user_message = f"""✅ Ваш заказ из корзины подтвержден администратором!
+
+🆔 Номер заказа: {order_id}
+🛒 Состав заказа:
+{cart_items_text}
+📦 Всего аккаунтов: {order_data.get('total_quantity', 0)} шт.
+💰 Общая сумма: {total_amount:.2f}₽
+
+📦 Аккаунты будут отправлены вам в ближайшее время.
+"""
+            else:
+                user_message = f"""✅ Ваш заказ подтвержден администратором!
+
+🆔 Номер заказа: {order_id}
+📦 Аккаунт: {order_data.get('product_name', 'Неизвестно')}
+🔢 Количество: {order_data.get('quantity', 1)} шт.
+💰 Сумма: {total_amount:.2f}₽
+
+📦 Аккаунт(ы) будут отправлены вам в ближайшее время.
+"""
+            
+            await bot.send_message(chat_id=user_id, text=user_message)
+            print(f"✅ Заказ {order_id} подтвержден для пользователя {user_id}")
+        except Exception as e:
+            print(f"Ошибка уведомления пользователя: {e}")
+            await callback.answer("Пользователь не получил уведомление", show_alert=True)
+        
+        await callback.answer("✅ Заказ подтвержден")
+        
+    except Exception as e:
+        print(f"Ошибка при подтверждении заказа: {e}")
+        await callback.answer("❌ Ошибка при подтверждении", show_alert=True)
+
+@dp.callback_query(F.data.startswith('reject_order_'))
+async def handle_reject_order(callback: CallbackQuery):
+    """Отклонить заказ администратором"""
+    try:
+        if callback.from_user.id not in config.ADMIN_IDS:
+            await callback.answer("⛔ Нет доступа", show_alert=True)
+            return
+        
+        order_id = callback.data.replace('reject_order_', '')
+        
+        order_data = db.get_pending_order(order_id)
+        if not order_data:
+            await callback.answer("Заказ не найден", show_alert=True)
+            return
+        
+        user_id = order_data.get('user_id')
+        total_amount = order_data.get('total', 0)
+        admin_username = callback.from_user.username or callback.from_user.first_name
+        
+        is_cart_order = order_data.get('is_cart_order', False)
+        
+        if is_cart_order:
+            product_name = f"Заказ из корзины ({order_data.get('total_quantity', 0)} аккаунтов)"
+        else:
+            product_name = f"{order_data.get('product_name', 'Неизвестный аккаунт')} x{order_data.get('quantity', 1)}"
+        
+        db.remove_pending_order(order_id)
+        
+        try:
+            if callback.message.photo:
+                await bot.edit_message_caption(
+                    chat_id=callback.message.chat.id,
+                    message_id=callback.message.message_id,
+                    caption=callback.message.caption + f"\n\n❌ ОТКЛОНЕНО АДМИНИСТРАТОРОМ: @{admin_username}",
+                    reply_markup=None
+                )
+            else:
+                await bot.edit_message_text(
+                    chat_id=callback.message.chat.id,
+                    message_id=callback.message.message_id,
+                    text=callback.message.text + f"\n\n❌ ОТКЛОНЕНО АДМИНИСТРАТОРОМ: @{admin_username}",
+                    reply_markup=None
+                )
+
+        except Exception as e:
+            print(f"Ошибка обновления сообщения: {e}")
+        
+        try:
+            message_text = f"""❌ Ваш заказ отклонен администратором!
+
+🆔 Номер заказа: {order_id}
+📦 {product_name}
+💰 Сумма: {total_amount:.2f}₽
+
+💳 Если есть вопросы, обратитесь в поддержку: {config.ADMIN_USERNAME}
+
+Возможные причины отказа:
+• Неверная сумма оплаты
+• Скриншот не читается
+• Проблемы с платежом
+• Технические причины
+"""
+            
+            await bot.send_message(chat_id=user_id, text=message_text)
+        except Exception as e:
+            print(f"Ошибка уведомления пользователя: {e}")
+        
+        await callback.answer("❌ Заказ отклонен")
+        
+    except Exception as e:
+        print(f"Ошибка при отклонении заказа: {e}")
+        await callback.answer("❌ Ошибка при отклонении", show_alert=True)
+
+@dp.callback_query(F.data.startswith('no_username_'))
+async def handle_no_username_warning(callback: CallbackQuery):
+    """Обработка предупреждения о отсутствии username"""
+    try:
+        if callback.from_user.id not in config.ADMIN_IDS:
+            await callback.answer("⛔ Нет доступа", show_alert=True)
+            return
+        
+        order_id = callback.data.replace('no_username_', '')
+        
+        order_data = db.get_pending_order(order_id)
+        if not order_data:
+            await callback.answer("Заказ не найден", show_alert=True)
+            return
+        
+        user_id = order_data.get('user_id')
+        
+        warning_text = f"""⚠️ ВНИМАНИЕ! У покупателя НЕТ USERNAME!
+
+🆔 ID заказа: {order_id}
+🆔 ID покупателя: {user_id}
+
+Действия:
+1. Отклонить заказ и попросить установить username
+2. Связаться с покупателем через личные сообщения по ID
+3. Попросить покупателя написать вам напрямую
+
+Риски:
+• Невозможно отправить аккаунты
+• Невозможно уточнить детали
+• Покупатель может не получить уведомления"""
+        
+        await callback.answer(warning_text, show_alert=True)
+        
+    except Exception as e:
+        print(f"Ошибка при показе предупреждения: {e}")
+        await callback.answer("Ошибка", show_alert=True)
+
+# ==================== АДМИН КОМАНДЫ И ОБРАБОТЧИКИ ====================
+
+@dp.message(Command("addproduct"))
+async def handle_add_product_command(message: Message, state: FSMContext):
+    """Команда добавления аккаунта"""
+    try:
+        if message.from_user.id not in config.ADMIN_IDS:
+            await message.answer("⛔ У вас нет прав администратора")
+            return
+        
+        categories = db.get_categories()
+        if not categories:
+            await message.answer(
+                "❌ Нет доступных категорий.\nСначала создайте категорию командой /addcategory"
+            )
+            return
+        
+        await state.set_state(AddProductStates.waiting_for_category)
+        
+        builder = InlineKeyboardBuilder()
+        for category in categories:
+            builder.row(
+                InlineKeyboardButton(
+                    text=category["name"],
+                    callback_data=f"admin_add_product_cat_{category['id']}"
+                )
+            )
+        builder.row(InlineKeyboardButton(text='❌ Отмена', callback_data='main_menu'))
+        
+        await message.answer(
+            text="➕ Добавление нового аккаунта\n\nВыберите категорию для аккаунта:",
+            reply_markup=builder.as_markup()
+        )
+        
+    except Exception as e:
+        print(f"Ошибка при запуске добавления аккаунта: {e}")
+        await message.answer("❌ Произошла ошибка")
+        await state.clear()
+
+@dp.message(Command("addcategory"))
+async def handle_add_category_command(message: Message):
+    """Команда добавления категории"""
+    try:
+        if message.from_user.id not in config.ADMIN_IDS:
+            await message.answer("⛔ У вас нет прав администратора")
+            return
+        
+        command_parts = message.text.split(maxsplit=1)
+        if len(command_parts) < 2:
+            await message.answer(
+                "❌ Не указано название категории.\n\n"
+                "Использование:\n"
+                "/addcategory <название категории>\n\n"
+                "Пример:\n"
+                "/addcategory 🇲🇲 Аккаунты Мьянма"
+            )
+            return
+        
+        category_name = command_parts[1].strip()
+        
+        if len(category_name) < 2:
+            await message.answer("❌ Название категории слишком короткое")
+            return
+        
+        if len(category_name) > 50:
+            await message.answer("❌ Название категории слишком длинное")
+            return
+        
+        existing_categories = db.get_categories()
+        for cat in existing_categories:
+            if cat['name'].lower() == category_name.lower():
+                await message.answer(f"❌ Категория с названием '{category_name}' уже существует")
+                return
+        
+        category_id = db.add_category(category_name)
+        
+        await message.answer(
+            text=f"✅ Категория добавлена!\n\n"
+                 f"📁 Название: {category_name}\n"
+                 f"🆔 ID: {category_id}",
+            reply_markup=main_menu_kb(message.from_user.id)
+        )
+        
+        print(f"✅ Добавлена новая категория: {category_name} (ID: {category_id})")
+        
+    except Exception as e:
+        print(f"Ошибка при добавлении категории: {e}")
+        await message.answer("❌ Ошибка при добавлении категории")
+
+@dp.message(Command("stats"))
+async def handle_stats_command(message: Message):
+    """Команда показа статистики"""
+    try:
+        if message.from_user.id not in config.ADMIN_IDS:
+            await message.answer("⛔ У вас нет прав администратора")
+            return
+        
+        categories_count = len(db.get_categories())
+        products_count = len(db.products)
+        users_count = len(db.users)
+        pending_orders = len(db.pending_orders)
+        
+        purchases = [t for t in db.transactions if t['type'] == 'purchase']
+        total_purchases = sum(abs(t['amount']) for t in purchases)
+        
+        active_carts = len(cart_manager.carts)
+        total_cart_items = sum(len(cart) for cart in cart_manager.carts.values())
+        
+        total_referrals = sum(len(u.get('referrals', [])) for u in db.users.values())
+        total_rewards = sum(u.get('available_rewards', 0) for u in db.users.values())
+        
+        stats_text = f"""📊 СТАТИСТИКА БОТА
+
+📈 Общая статистика:
+• 📁 Категорий: {categories_count}
+• 📦 Аккаунтов: {products_count}
+• 👥 Пользователей: {users_count}
+• ⏳ Ожидающих заказов: {pending_orders}
+• 🛍️ Активных корзин: {active_carts}
+• 🛒 Аккаунтов в корзинах: {total_cart_items}
+
+💰 Финансовая статистика:
+• 🛒 Всего покупок: {len(purchases)}
+• 💸 Общая сумма: {total_purchases:.2f}₽
+
+🎁 Реферальная статистика:
+• 👥 Всего рефералов: {total_referrals}
+• 🎁 Доступно наград: {total_rewards}
+
+💳 Способы оплаты:
+• 💳 СБП (Любой банк)
+• 💰 ЮMoney
+• ₿ USDT (TRC-20)
+• 💎 TON Coin
+"""
+        
+        await message.answer(stats_text)
+        
+    except Exception as e:
+        print(f"Ошибка при показе статистики: {e}")
+        await message.answer("❌ Ошибка при загрузке статистики")
+
+@dp.message(Command("referral_stats"))
+async def handle_referral_stats_command(message: Message):
+    """Команда показа статистики рефералов"""
+    try:
+        if message.from_user.id not in config.ADMIN_IDS:
+            await message.answer("⛔ У вас нет прав администратора")
+            return
+        
+        config_ref = Config.REFERRAL_CONFIG
+        
+        total_referrals = sum(len(u.get('referrals', [])) for u in db.users.values())
+        total_qualified = sum(u.get('qualified_referrals', 0) for u in db.users.values())
+        total_rewards_available = sum(u.get('available_rewards', 0) for u in db.users.values())
+        total_rewards_used = sum(u.get('used_rewards', 0) for u in db.users.values())
+        
+        top_referrers = []
+        for user_id, user_data in db.users.items():
+            referrals_count = len(user_data.get('referrals', []))
+            if referrals_count > 0:
+                top_referrers.append({
+                    'user_id': user_id,
+                    'referrals': referrals_count,
+                    'qualified': user_data.get('qualified_referrals', 0)
+                })
+        
+        top_referrers.sort(key=lambda x: x['referrals'], reverse=True)
+        
+        text = f"""🎁 **СТАТИСТИКА РЕФЕРАЛЬНОЙ ПРОГРАММЫ**
+
+📊 **ОБЩАЯ СТАТИСТИКА:**
+• Статус: {'✅ Включена' if config_ref['enabled'] else '❌ Выключена'}
+• Минимальная сумма: {config_ref['min_purchase_amount']}₽
+• Награда: {config_ref['reward_description']}
+
+📈 **ПОКАЗАТЕЛИ:**
+• Всего рефералов: {total_referrals}
+• Квалифицированных: {total_qualified}
+• Доступно наград: {total_rewards_available}
+• Использовано наград: {total_rewards_used}
+
+"""
+        if top_referrers:
+            text += "🏆 **ТОП РЕФЕРАЛОВ:**\n"
+            for i, ref in enumerate(top_referrers[:5], 1):
+                text += f"{i}. ID: {ref['user_id']} - {ref['referrals']} рефералов ({ref['qualified']} квалиф.)\n"
+        
+        await message.answer(text, parse_mode='Markdown')
+        
+    except Exception as e:
+        print(f"Ошибка при показе статистики рефералов: {e}")
+        await message.answer("❌ Ошибка")
+
+# ==================== ОБРАБОТЧИКИ АДМИН-ПАНЕЛИ ====================
 
 @dp.callback_query(F.data == 'admin_users')
 async def handle_admin_users(callback: CallbackQuery):
@@ -2399,7 +2992,6 @@ async def handle_admin_stats(callback: CallbackQuery):
         active_carts = len(cart_manager.carts)
         total_cart_items = sum(len(cart) for cart in cart_manager.carts.values())
         
-        # Реферальная статистика
         total_referrals = sum(len(u.get('referrals', [])) for u in db.users.values())
         total_qualified = sum(u.get('qualified_referrals', 0) for u in db.users.values())
         total_rewards = sum(u.get('available_rewards', 0) for u in db.users.values())
@@ -2408,11 +3000,11 @@ async def handle_admin_stats(callback: CallbackQuery):
 
 📈 Общая статистика:
 • 📁 Категорий: {categories_count}
-• 📦 Товаров: {products_count}
+• 📦 Аккаунтов: {products_count}
 • 👥 Пользователей: {users_count}
 • ⏳ Ожидающих заказов: {len(db.pending_orders)}
 • 🛍️ Активных корзин: {active_carts}
-• 🛒 Товаров в корзинах: {total_cart_items}
+• 🛒 Аккаунтов в корзинах: {total_cart_items}
 
 💰 Финансовая статистика:
 • 🛒 Покупок: {len(purchases)} на {total_purchases:.2f}₽
@@ -2424,8 +3016,11 @@ async def handle_admin_stats(callback: CallbackQuery):
 • ✅ Квалифицированных: {total_qualified}
 • 🎁 Доступно наград: {total_rewards}
 
-💳 Способ оплаты:
-• 🏦 Только Ozon (СБП/Карта)
+💳 Способы оплаты:
+• 💳 СБП (Любой банк)
+• 💰 ЮMoney
+• ₿ USDT (TRC-20)
+• 💎 TON Coin
 """
         
         builder = InlineKeyboardBuilder()
@@ -2446,19 +3041,19 @@ async def handle_admin_stats(callback: CallbackQuery):
 
 @dp.callback_query(F.data == 'admin_products')
 async def handle_admin_products(callback: CallbackQuery):
-    """Управление товарами"""
+    """Управление аккаунтами"""
     try:
         if callback.from_user.id not in config.ADMIN_IDS:
             await callback.answer("⛔ Нет доступа", show_alert=True)
             return
         
         await callback.message.edit_text(
-            text="📦 Управление товарами\n\nВыберите действие:",
+            text="📦 Управление аккаунтами\n\nВыберите действие:",
             reply_markup=admin_products_kb()
         )
         
     except Exception as e:
-        print(f"Ошибка при управлении товарами: {e}")
+        print(f"Ошибка при управлении аккаунтами: {e}")
         await callback.answer("Ошибка", show_alert=True)
     
     await callback.answer()
@@ -2724,7 +3319,7 @@ async def handle_admin_referral_stats(callback: CallbackQuery):
 
 @dp.callback_query(F.data == 'admin_list_products')
 async def handle_admin_list_products(callback: CallbackQuery):
-    """Список товаров"""
+    """Список аккаунтов"""
     try:
         if callback.from_user.id not in config.ADMIN_IDS:
             await callback.answer("⛔ Нет доступа", show_alert=True)
@@ -2733,15 +3328,23 @@ async def handle_admin_list_products(callback: CallbackQuery):
         products = db.get_all_products()
         
         if not products:
-            text = "📭 Товары пока отсутствуют"
+            text = "📭 Аккаунты пока отсутствуют"
         else:
-            text = "📦 Список всех товаров:\n\n"
+            text = "📦 Список всех аккаунтов:\n\n"
             
             for i, product in enumerate(products, 1):
                 category = db.get_category(product.get('category_id', 0))
                 category_name = category.get('name', 'Неизвестно') if category else 'Неизвестно'
                 
-                text += f"{i}. 📦 {product['name']}\n"
+                emoji = "📱"
+                if "Мьянма" in product['name']:
+                    emoji = "🇲🇲"
+                elif "Турция" in product['name']:
+                    emoji = "🇹🇷"
+                elif "Инстаграм" in product['name']:
+                    emoji = "📸"
+                
+                text += f"{i}. {emoji} {product['name']}\n"
                 text += f"   🆔 ID: {product['id']}\n"
                 text += f"   💰 Цена: {product['price']:.2f}₽\n"
                 text += f"   📁 Категория: {category_name}\n"
@@ -2758,7 +3361,7 @@ async def handle_admin_list_products(callback: CallbackQuery):
         )
         
     except Exception as e:
-        print(f"Ошибка при показе списка товаров: {e}")
+        print(f"Ошибка при показе списка аккаунтов: {e}")
         await callback.answer("Ошибка", show_alert=True)
     
     await callback.answer()
@@ -2782,7 +3385,7 @@ async def handle_admin_list_categories(callback: CallbackQuery):
                 products_count = len(db.get_products_by_category(category['id']))
                 text += f"{i}. {category['name']}\n"
                 text += f"   🆔 ID: {category['id']}\n"
-                text += f"   📦 Товаров: {products_count}\n\n"
+                text += f"   📦 Аккаунтов: {products_count}\n\n"
         
         await callback.message.edit_text(
             text=text,
@@ -2806,7 +3409,7 @@ async def handle_admin_add_category(callback: CallbackQuery):
         await callback.message.edit_text(
             text="📁 Добавление новой категории\n\n"
                  "Введите название новой категории:\n"
-                 "(например: 💻 Цифровые услуги)\n\n"
+                 "(например: 🇲🇲 Аккаунты Мьянма)\n\n"
                  "Или нажмите '🔙 Назад' для отмены",
             reply_markup=InlineKeyboardBuilder()
                 .add(InlineKeyboardButton(text='🔙 Назад', callback_data='admin_categories'))
@@ -2821,7 +3424,7 @@ async def handle_admin_add_category(callback: CallbackQuery):
 
 @dp.callback_query(F.data == 'admin_add_product')
 async def handle_admin_add_product(callback: CallbackQuery, state: FSMContext):
-    """Добавление товара через меню"""
+    """Добавление аккаунта через меню"""
     try:
         if callback.from_user.id not in config.ADMIN_IDS:
             await callback.answer("⛔ Нет доступа", show_alert=True)
@@ -2848,12 +3451,12 @@ async def handle_admin_add_product(callback: CallbackQuery, state: FSMContext):
         builder.row(InlineKeyboardButton(text='🔙 Назад', callback_data='admin_products'))
         
         await callback.message.edit_text(
-            text="➕ Добавление нового товара\n\nВыберите категорию для товара:",
+            text="➕ Добавление нового аккаунта\n\nВыберите категорию для аккаунта:",
             reply_markup=builder.as_markup()
         )
         
     except Exception as e:
-        print(f"Ошибка при запуске добавления товара: {e}")
+        print(f"Ошибка при запуске добавления аккаунта: {e}")
         await callback.answer("Ошибка", show_alert=True)
         await state.clear()
     
@@ -2861,7 +3464,7 @@ async def handle_admin_add_product(callback: CallbackQuery, state: FSMContext):
 
 @dp.callback_query(F.data.startswith('admin_add_product_cat_'))
 async def handle_admin_product_category(callback: CallbackQuery, state: FSMContext):
-    """Обработка выбора категории для товара"""
+    """Обработка выбора категории для аккаунта"""
     try:
         category_id = int(callback.data.replace('admin_add_product_cat_', ''))
         
@@ -2869,12 +3472,12 @@ async def handle_admin_product_category(callback: CallbackQuery, state: FSMConte
         await state.set_state(AddProductStates.waiting_for_name)
         
         await callback.message.edit_text(
-            text="📝 Введите название товара:",
+            text="📝 Введите название аккаунта:",
             reply_markup=cancel_kb()
         )
         
     except Exception as e:
-        print(f"Ошибка при выборе категории товара: {e}")
+        print(f"Ошибка при выборе категории аккаунта: {e}")
         await callback.answer("Ошибка", show_alert=True)
         await state.clear()
     
@@ -2882,13 +3485,13 @@ async def handle_admin_product_category(callback: CallbackQuery, state: FSMConte
 
 @dp.message(AddProductStates.waiting_for_name)
 async def handle_product_name(message: Message, state: FSMContext):
-    """Обработка ввода названия товара"""
+    """Обработка ввода названия аккаунта"""
     try:
         product_name = message.text.strip()
         
         if len(product_name) < 2:
             await message.answer(
-                text="❌ Название слишком короткое. Введите название товара:",
+                text="❌ Название слишком короткое. Введите название аккаунта:",
                 reply_markup=cancel_kb()
             )
             return
@@ -2897,18 +3500,18 @@ async def handle_product_name(message: Message, state: FSMContext):
         await state.set_state(AddProductStates.waiting_for_price)
         
         await message.answer(
-            text="💰 Введите цену товара (в рублях):\n\nПример: 1000 или 1500.50",
+            text="💰 Введите цену аккаунта (в рублях):\n\nПример: 1000 или 1500.50",
             reply_markup=cancel_kb()
         )
         
     except Exception as e:
-        print(f"Ошибка при вводе названия товара: {e}")
+        print(f"Ошибка при вводе названия аккаунта: {e}")
         await message.answer("❌ Ошибка", reply_markup=cancel_kb())
         await state.clear()
 
 @dp.message(AddProductStates.waiting_for_price)
 async def handle_product_price(message: Message, state: FSMContext):
-    """Обработка ввода цены товара"""
+    """Обработка ввода цены аккаунта"""
     try:
         price_text = message.text.strip().replace(',', '.')
         
@@ -2923,7 +3526,7 @@ async def handle_product_price(message: Message, state: FSMContext):
         
         if price <= 0:
             await message.answer(
-                text="❌ Цена должна быть больше 0!\n\nВведите цену товара:",
+                text="❌ Цена должна быть больше 0!\n\nВведите цену аккаунта:",
                 reply_markup=cancel_kb()
             )
             return
@@ -2932,18 +3535,18 @@ async def handle_product_price(message: Message, state: FSMContext):
         await state.set_state(AddProductStates.waiting_for_description)
         
         await message.answer(
-            text="📝 Введите описание товара (или 'нет' для пропуска):",
+                       text="📝 Введите описание аккаунта (или 'нет' для пропуска):",
             reply_markup=cancel_kb()
         )
         
     except Exception as e:
-        print(f"Ошибка при вводе цены товара: {e}")
+        print(f"Ошибка при вводе цены аккаунта: {e}")
         await message.answer("❌ Ошибка", reply_markup=cancel_kb())
         await state.clear()
 
 @dp.message(AddProductStates.waiting_for_description)
 async def handle_product_description(message: Message, state: FSMContext):
-    """Обработка ввода описания товара"""
+    """Обработка ввода описания аккаунта"""
     try:
         description = message.text.strip()
         if description.lower() == 'нет':
@@ -2965,29 +3568,37 @@ async def handle_product_description(message: Message, state: FSMContext):
         
         category = db.get_category(category_id)
         
+        emoji = "📱"
+        if "Мьянма" in product_name:
+            emoji = "🇲🇲"
+        elif "Турция" in product_name:
+            emoji = "🇹🇷"
+        elif "Инстаграм" in product_name:
+            emoji = "📸"
+        
         await message.answer(
-            text=f"✅ Товар успешно добавлен!\n\n"
-                 f"📦 Название: {product_name}\n"
+            text=f"✅ Аккаунт успешно добавлен!\n\n"
+                 f"{emoji} Название: {product_name}\n"
                  f"💰 Цена: {price:.2f}₽\n"
                  f"📝 Описание: {description or 'Нет описания'}\n"
                  f"📁 Категория: {category.get('name', 'Неизвестно') if category else 'Неизвестно'}\n"
-                 f"🆔 ID товара: {product_id}",
+                 f"🆔 ID аккаунта: {product_id}",
             reply_markup=main_menu_kb(message.from_user.id)
         )
         
-        print(f"✅ Добавлен новый товар: {product_name} (ID: {product_id}) в категорию {category_id}")
+        print(f"✅ Добавлен новый аккаунт: {product_name} (ID: {product_id}) в категорию {category_id}")
         
     except Exception as e:
-        print(f"Ошибка при добавлении товара: {e}")
+        print(f"Ошибка при добавлении аккаунта: {e}")
         await message.answer(
-            text="❌ Ошибка при добавлении товара",
+            text="❌ Ошибка при добавлении аккаунта",
             reply_markup=main_menu_kb(message.from_user.id)
         )
         await state.clear()
 
 @dp.callback_query(F.data == 'admin_delete_product')
 async def handle_admin_delete_product(callback: CallbackQuery, state: FSMContext):
-    """Удаление товара"""
+    """Удаление аккаунта"""
     try:
         if callback.from_user.id not in config.ADMIN_IDS:
             await callback.answer("⛔ Нет доступа", show_alert=True)
@@ -2997,7 +3608,7 @@ async def handle_admin_delete_product(callback: CallbackQuery, state: FSMContext
         
         if not products:
             await callback.message.edit_text(
-                text="📭 Нет товаров для удаления",
+                text="📭 Нет аккаунтов для удаления",
                 reply_markup=admin_products_kb()
             )
             return
@@ -3005,13 +3616,21 @@ async def handle_admin_delete_product(callback: CallbackQuery, state: FSMContext
         builder = InlineKeyboardBuilder()
         
         for product in products:
+            emoji = "📱"
+            if "Мьянма" in product['name']:
+                emoji = "🇲🇲"
+            elif "Турция" in product['name']:
+                emoji = "🇹🇷"
+            elif "Инстаграм" in product['name']:
+                emoji = "📸"
+            
             product_name = product['name']
             if len(product_name) > 25:
                 product_name = product_name[:22] + "..."
             
             builder.row(
                 InlineKeyboardButton(
-                    text=f"🗑️ {product_name} - {product['price']}₽",
+                    text=f"🗑️ {emoji} {product_name} - {product['price']}₽",
                     callback_data=f"admin_delete_product_confirm_{product['id']}"
                 )
             )
@@ -3021,19 +3640,19 @@ async def handle_admin_delete_product(callback: CallbackQuery, state: FSMContext
         )
         
         await callback.message.edit_text(
-            text="🗑️ Выберите товар для удаления:",
+            text="🗑️ Выберите аккаунт для удаления:",
             reply_markup=builder.as_markup()
         )
         
     except Exception as e:
-        print(f"Ошибка при удалении товара: {e}")
+        print(f"Ошибка при удалении аккаунта: {e}")
         await callback.answer("Ошибка", show_alert=True)
     
     await callback.answer()
 
 @dp.callback_query(F.data.startswith('admin_delete_product_confirm_'))
 async def handle_admin_delete_product_confirm(callback: CallbackQuery):
-    """Подтверждение удаления товара"""
+    """Подтверждение удаления аккаунта"""
     try:
         if callback.from_user.id not in config.ADMIN_IDS:
             await callback.answer("⛔ Нет доступа", show_alert=True)
@@ -3043,8 +3662,16 @@ async def handle_admin_delete_product_confirm(callback: CallbackQuery):
         
         product = db.get_product(product_id)
         if not product:
-            await callback.answer("Товар не найден", show_alert=True)
+            await callback.answer("Аккаунт не найден", show_alert=True)
             return
+        
+        emoji = "📱"
+        if "Мьянма" in product['name']:
+            emoji = "🇲🇲"
+        elif "Турция" in product['name']:
+            emoji = "🇹🇷"
+        elif "Инстаграм" in product['name']:
+            emoji = "📸"
         
         builder = InlineKeyboardBuilder()
         builder.row(
@@ -3053,22 +3680,22 @@ async def handle_admin_delete_product_confirm(callback: CallbackQuery):
         )
         
         await callback.message.edit_text(
-            text=f"⚠️ Вы уверены, что хотите удалить товар?\n\n"
-                 f"📦 {product['name']}\n"
+            text=f"⚠️ Вы уверены, что хотите удалить аккаунт?\n\n"
+                 f"{emoji} {product['name']}\n"
                  f"💰 Цена: {product['price']}₽\n\n"
                  f"Это действие нельзя отменить!",
             reply_markup=builder.as_markup()
         )
         
     except Exception as e:
-        print(f"Ошибка при подтверждении удаления товара: {e}")
+        print(f"Ошибка при подтверждении удаления аккаунта: {e}")
         await callback.answer("Ошибка", show_alert=True)
     
     await callback.answer()
 
 @dp.callback_query(F.data.startswith('admin_delete_product_final_'))
 async def handle_admin_delete_product_final(callback: CallbackQuery):
-    """Финальное удаление товара"""
+    """Финальное удаление аккаунта"""
     try:
         if callback.from_user.id not in config.ADMIN_IDS:
             await callback.answer("⛔ Нет доступа", show_alert=True)
@@ -3078,223 +3705,39 @@ async def handle_admin_delete_product_final(callback: CallbackQuery):
         
         product = db.get_product(product_id)
         
+        emoji = "📱"
+        if product and "Мьянма" in product['name']:
+            emoji = "🇲🇲"
+        elif product and "Турция" in product['name']:
+            emoji = "🇹🇷"
+        elif product and "Инстаграм" in product['name']:
+            emoji = "📸"
+        
         if db.delete_product(product_id):
             await callback.message.edit_text(
-                text=f"✅ Товар успешно удален!\n\n"
-                     f"📦 Название: {product['name']}\n"
+                text=f"✅ Аккаунт успешно удален!\n\n"
+                     f"{emoji} Название: {product['name']}\n"
                      f"💰 Цена: {product['price']}₽\n"
                      f"🆔 ID: {product_id}",
                 reply_markup=admin_products_kb()
             )
-            print(f"🗑️ Удален товар: {product['name']} (ID: {product_id})")
+            print(f"🗑️ Удален аккаунт: {product['name']} (ID: {product_id})")
         else:
             await callback.message.edit_text(
-                text="❌ Не удалось удалить товар. Возможно, товар не существует.",
+                text="❌ Не удалось удалить аккаунт. Возможно, аккаунт не существует.",
                 reply_markup=admin_products_kb()
             )
         
     except Exception as e:
-        print(f"Ошибка при удалении товара: {e}")
+        print(f"Ошибка при удалении аккаунта: {e}")
         await callback.message.edit_text(
-            text="❌ Ошибка при удалении товара",
+            text="❌ Ошибка при удалении аккаунта",
             reply_markup=admin_products_kb()
         )
     
     await callback.answer()
 
-# ==================== ОБРАБОТЧИКИ ПОДТВЕРЖДЕНИЯ АДМИНИСТРАТОРОМ ====================
-
-@dp.callback_query(F.data.startswith('confirm_order_'))
-async def handle_confirm_order(callback: CallbackQuery):
-    """Подтвердить заказ администратором"""
-    try:
-        if callback.from_user.id not in config.ADMIN_IDS:
-            await callback.answer("⛔ Нет доступа", show_alert=True)
-            return
-        
-        order_id = callback.data.replace('confirm_order_', '')
-        
-        order_data = db.get_pending_order(order_id)
-        if not order_data:
-            await callback.answer("Заказ не найден", show_alert=True)
-            return
-        
-        user_id = order_data.get('user_id')
-        total_amount = order_data.get('total', 0)
-        username = callback.from_user.username or callback.from_user.first_name
-        
-        is_cart_order = order_data.get('is_cart_order', False)
-        
-        if is_cart_order:
-            product_name = f"Заказ из корзины ({order_data.get('total_quantity', 0)} товаров)"
-        else:
-            product_name = order_data.get('product_name', 'Неизвестный товар')
-        
-        db.remove_pending_order(order_id)
-        
-        try:
-            if callback.message.photo:
-                new_caption = callback.message.caption + f"\n\n✅ ПОДТВЕРЖДЕНО АДМИНИСТРАТОРОМ: @{username}"
-                await bot.edit_message_caption(
-                    chat_id=callback.message.chat.id,
-                    message_id=callback.message.message_id,
-                    caption=new_caption,
-                    reply_markup=None
-                )
-            else:
-                new_text = callback.message.text + f"\n\n✅ ПОДТВЕРЖДЕНО АДМИНИСТРАТОРОМ: @{username}"
-                await bot.edit_message_text(
-                    chat_id=callback.message.chat.id,
-                    message_id=callback.message.message_id,
-                    text=new_text,
-                    reply_markup=None
-                )
-        except Exception as e:
-            print(f"Ошибка обновления сообщения: {e}")
-        
-        try:
-            if is_cart_order:
-                cart_items_text = ""
-                cart_items = order_data.get('cart_items', [])
-                for item in cart_items:
-                    cart_items_text += f"• {item['name']} x{item['quantity']} = {item['item_total']:.2f}₽\n"
-                
-                user_message = f"""✅ Ваш заказ из корзины подтвержден администратором!
-
-🆔 Номер заказа: {order_id}
-🛒 Состав заказа:
-{cart_items_text}
-📦 Всего товаров: {order_data.get('total_quantity', 0)} шт.
-💰 Общая сумма: {total_amount:.2f}₽
-
-📦 Товары будут отправлены вам в ближайшее время.
-"""
-            else:
-                user_message = f"""✅ Ваш заказ подтвержден администратором!
-
-🆔 Номер заказа: {order_id}
-📦 Товар: {product_name}
-💰 Сумма: {total_amount:.2f}₽
-
-📦 Товар будет отправлен вам в ближайшее время.
-"""
-            
-            await bot.send_message(chat_id=user_id, text=user_message)
-            print(f"✅ Заказ {order_id} подтвержден для пользователя {user_id}")
-        except Exception as e:
-            print(f"Ошибка уведомления пользователя: {e}")
-            await callback.answer("Пользователь не получил уведомление", show_alert=True)
-        
-        await callback.answer("✅ Заказ подтвержден")
-        
-    except Exception as e:
-        print(f"Ошибка при подтверждении заказа: {e}")
-        await callback.answer("❌ Ошибка при подтверждении", show_alert=True)
-
-@dp.callback_query(F.data.startswith('reject_order_'))
-async def handle_reject_order(callback: CallbackQuery):
-    """Отклонить заказ администратором"""
-    try:
-        if callback.from_user.id not in config.ADMIN_IDS:
-            await callback.answer("⛔ Нет доступа", show_alert=True)
-            return
-        
-        order_id = callback.data.replace('reject_order_', '')
-        
-        order_data = db.get_pending_order(order_id)
-        if not order_data:
-            await callback.answer("Заказ не найден", show_alert=True)
-            return
-        
-        user_id = order_data.get('user_id')
-        total_amount = order_data.get('total', 0)
-        
-        is_cart_order = order_data.get('is_cart_order', False)
-        
-        if is_cart_order:
-            product_name = f"Заказ из корзины ({order_data.get('total_quantity', 0)} товаров)"
-        else:
-            product_name = order_data.get('product_name', 'Неизвестный товар')
-        
-        db.remove_pending_order(order_id)
-        
-        try:
-            if callback.message.photo:
-                await bot.edit_message_caption(
-                    chat_id=callback.message.chat.id,
-                    message_id=callback.message.message_id,
-                    caption=callback.message.caption + f"\n\n❌ ОТКЛОНЕНО АДМИНИСТРАТОРОМ: @{callback.from_user.username}",
-                    reply_markup=None
-                )
-            else:
-                await bot.edit_message_text(
-                    chat_id=callback.message.chat.id,
-                    message_id=callback.message.message_id,
-                    text=callback.message.text + f"\n\n❌ ОТКЛОНЕНО АДМИНИСТРАТОРОМ: @{callback.from_user.username}",
-                    reply_markup=None
-                )
-        except Exception as e:
-            print(f"Ошибка обновления сообщения: {e}")
-        
-        try:
-            message_text = f"""❌ Ваш заказ отклонен администратором!
-
-🆔 Номер заказа: {order_id}
-📦 Товар: {product_name}
-💰 Сумма: {total_amount:.2f}₽
-
-💳 Если есть вопросы, обратитесь в поддержку: {config.ADMIN_USERNAME}
-"""
-            
-            await bot.send_message(chat_id=user_id, text=message_text)
-        except Exception as e:
-            print(f"Ошибка уведомления пользователя: {e}")
-        
-        await callback.answer("❌ Заказ отклонен")
-        
-    except Exception as e:
-        print(f"Ошибка при отклонении заказа: {e}")
-        await callback.answer("❌ Ошибка при отклонении", show_alert=True)
-
-@dp.callback_query(F.data.startswith('no_username_'))
-async def handle_no_username_warning(callback: CallbackQuery):
-    """Обработка предупреждения о отсутствии username"""
-    try:
-        if callback.from_user.id not in config.ADMIN_IDS:
-            await callback.answer("⛔ Нет доступа", show_alert=True)
-            return
-        
-        order_id = callback.data.replace('no_username_', '')
-        
-        order_data = db.get_pending_order(order_id)
-        if not order_data:
-            await callback.answer("Заказ не найден", show_alert=True)
-            return
-        
-        user_id = order_data.get('user_id')
-        
-        warning_text = f"""⚠️ ВНИМАНИЕ! У покупателя НЕТ USERNAME!
-
-🆔 ID заказа: {order_id}
-🆔 ID покупателя: {user_id}
-
-Действия:
-1. Отклонить заказ и попросить установить username
-2. Связаться с покупателем через личные сообщения по ID
-3. Попросить покупателя написать вам напрямую
-
-Риски:
-• Невозможно отправить товар
-• Невозможно уточнить детали
-• Покупатель может не получить уведомления"""
-        
-        await callback.answer(warning_text, show_alert=True)
-        
-    except Exception as e:
-        print(f"Ошибка при показе предупреждения: {e}")
-        await callback.answer("Ошибка", show_alert=True)
-
-# ==================== ОБРАБОТЧИК ПАГИНАЦИИ ====================
+# ==================== ОБРАБОТЧИКИ ПАГИНАЦИИ ====================
 
 @dp.callback_query(F.data.startswith('page_'))
 async def handle_page_change(callback: CallbackQuery):
@@ -3316,14 +3759,14 @@ async def handle_page_change(callback: CallbackQuery):
         total_pages = max(1, (len(products) + items_per_page - 1) // items_per_page)
         
         if not products:
-            text = f"📭 В категории '{category_name}' пока нет товаров"
+            text = f"📭 В категории '{category_name}' пока нет аккаунтов"
         else:
             start_idx = page * items_per_page + 1
             end_idx = min((page + 1) * items_per_page, len(products))
             
-            text = f"🛒 Товары в категории '{category_name}':\n"
-            text += f"📄 Показано {start_idx}-{end_idx} из {len(products)} товаров\n\n"
-            text += "Выберите товар:"
+            text = f"📱 Аккаунты в категории '{category_name}':\n"
+            text += f"📄 Показано {start_idx}-{end_idx} из {len(products)} аккаунтов\n\n"
+            text += "Выберите аккаунт:"
         
         await callback.message.edit_text(
             text=text,
@@ -3334,204 +3777,15 @@ async def handle_page_change(callback: CallbackQuery):
         await callback.answer("Неверный ID категории", show_alert=True)
     except Exception as e:
         print(f"Ошибка при смене страницы: {e}")
-        await callback.answer("Ошибка загрузки товаров", show_alert=True)
+        await callback.answer("Ошибка загрузки аккаунтов", show_alert=True)
     
     await callback.answer()
 
-# ==================== АДМИН КОМАНДЫ ====================
-
-@dp.message(Command("addproduct"))
-async def handle_add_product_command(message: Message, state: FSMContext):
-    """Команда добавления товара"""
-    try:
-        if message.from_user.id not in config.ADMIN_IDS:
-            await message.answer("⛔ У вас нет прав администратора")
-            return
-        
-        categories = db.get_categories()
-        if not categories:
-            await message.answer(
-                "❌ Нет доступных категорий.\nСначала создайте категорию командой /addcategory"
-            )
-            return
-        
-        await state.set_state(AddProductStates.waiting_for_category)
-        
-        builder = InlineKeyboardBuilder()
-        for category in categories:
-            builder.row(
-                InlineKeyboardButton(
-                    text=category["name"],
-                    callback_data=f"admin_add_product_cat_{category['id']}"
-                )
-            )
-        builder.row(InlineKeyboardButton(text='❌ Отмена', callback_data='cancel'))
-        
-        await message.answer(
-            text="➕ Добавление нового товара\n\nВыберите категорию для товара:",
-            reply_markup=builder.as_markup()
-        )
-        
-    except Exception as e:
-        print(f"Ошибка при запуске добавления товара: {e}")
-        await message.answer("❌ Произошла ошибка")
-        await state.clear()
-
-@dp.message(Command("addcategory"))
-async def handle_add_category_command(message: Message):
-    """Команда добавления категории"""
-    try:
-        if message.from_user.id not in config.ADMIN_IDS:
-            await message.answer("⛔ У вас нет прав администратора")
-            return
-        
-        command_parts = message.text.split(maxsplit=1)
-        if len(command_parts) < 2:
-            await message.answer(
-                "❌ Не указано название категории.\n\n"
-                "Использование:\n"
-                "/addcategory <название категории>\n\n"
-                "Пример:\n"
-                "/addcategory 💻 Цифровые услуги"
-            )
-            return
-        
-        category_name = command_parts[1].strip()
-        
-        if len(category_name) < 2:
-            await message.answer("❌ Название категории слишком короткое")
-            return
-        
-        if len(category_name) > 50:
-            await message.answer("❌ Название категории слишком длинное")
-            return
-        
-        existing_categories = db.get_categories()
-        for cat in existing_categories:
-            if cat['name'].lower() == category_name.lower():
-                await message.answer(f"❌ Категория с названием '{category_name}' уже существует")
-                return
-        
-        category_id = db.add_category(category_name)
-        
-        await message.answer(
-            text=f"✅ Категория добавлена!\n\n"
-                 f"📁 Название: {category_name}\n"
-                 f"🆔 ID: {category_id}",
-            reply_markup=main_menu_kb(message.from_user.id)
-        )
-        
-        print(f"✅ Добавлена новая категория: {category_name} (ID: {category_id})")
-        
-    except Exception as e:
-        print(f"Ошибка при добавлении категории: {e}")
-        await message.answer("❌ Ошибка при добавлении категории")
-
-@dp.message(Command("stats"))
-async def handle_stats_command(message: Message):
-    """Команда показа статистики"""
-    try:
-        if message.from_user.id not in config.ADMIN_IDS:
-            await message.answer("⛔ У вас нет прав администратора")
-            return
-        
-        categories_count = len(db.get_categories())
-        products_count = len(db.products)
-        users_count = len(db.users)
-        pending_orders = len(db.pending_orders)
-        
-        purchases = [t for t in db.transactions if t['type'] == 'purchase']
-        total_purchases = sum(abs(t['amount']) for t in purchases)
-        
-        active_carts = len(cart_manager.carts)
-        total_cart_items = sum(len(cart) for cart in cart_manager.carts.values())
-        
-        total_referrals = sum(len(u.get('referrals', [])) for u in db.users.values())
-        total_rewards = sum(u.get('available_rewards', 0) for u in db.users.values())
-        
-        stats_text = f"""📊 СТАТИСТИКА БОТА (команда /stats)
-
-📈 Общая статистика:
-• 📁 Категорий: {categories_count}
-• 📦 Товаров: {products_count}
-• 👥 Пользователей: {users_count}
-• ⏳ Ожидающих заказов: {pending_orders}
-• 🛍️ Активных корзин: {active_carts}
-• 🛒 Товаров в корзинах: {total_cart_items}
-
-💰 Финансовая статистика:
-• 🛒 Всего покупок: {len(purchases)}
-• 💸 Общая сумма: {total_purchases:.2f}₽
-
-🎁 Реферальная статистика:
-• 👥 Всего рефералов: {total_referrals}
-• 🎁 Доступно наград: {total_rewards}
-
-💳 Способ оплаты:
-• 🏦 Только Ozon (СБП/Карта)
-"""
-        
-        await message.answer(stats_text)
-        
-    except Exception as e:
-        print(f"Ошибка при показе статистики: {e}")
-        await message.answer("❌ Ошибка при загрузке статистики")
-
-@dp.message(Command("referral_stats"))
-async def handle_referral_stats_command(message: Message):
-    """Команда показа статистики рефералов"""
-    try:
-        if message.from_user.id not in config.ADMIN_IDS:
-            await message.answer("⛔ У вас нет прав администратора")
-            return
-        
-        config_ref = Config.REFERRAL_CONFIG
-        
-        total_referrals = sum(len(u.get('referrals', [])) for u in db.users.values())
-        total_qualified = sum(u.get('qualified_referrals', 0) for u in db.users.values())
-        total_rewards_available = sum(u.get('available_rewards', 0) for u in db.users.values())
-        total_rewards_used = sum(u.get('used_rewards', 0) for u in db.users.values())
-        
-        top_referrers = []
-        for user_id, user_data in db.users.items():
-            referrals_count = len(user_data.get('referrals', []))
-            if referrals_count > 0:
-                top_referrers.append({
-                    'user_id': user_id,
-                    'referrals': referrals_count,
-                    'qualified': user_data.get('qualified_referrals', 0)
-                })
-        
-        top_referrers.sort(key=lambda x: x['referrals'], reverse=True)
-        
-        text = f"""🎁 **СТАТИСТИКА РЕФЕРАЛЬНОЙ ПРОГРАММЫ**
-
-📊 **ОБЩАЯ СТАТИСТИКА:**
-• Статус: {'✅ Включена' if config_ref['enabled'] else '❌ Выключена'}
-• Минимальная сумма: {config_ref['min_purchase_amount']}₽
-• Награда: {config_ref['reward_description']}
-
-📈 **ПОКАЗАТЕЛИ:**
-• Всего рефералов: {total_referrals}
-• Квалифицированных: {total_qualified}
-• Доступно наград: {total_rewards_available}
-• Использовано наград: {total_rewards_used}
-
-"""
-        if top_referrers:
-            text += "🏆 **ТОП РЕФЕРАЛОВ:**\n"
-            for i, ref in enumerate(top_referrers[:5], 1):
-                text += f"{i}. ID: {ref['user_id']} - {ref['referrals']} рефералов ({ref['qualified']} квалиф.)\n"
-        
-        await message.answer(text, parse_mode='Markdown')
-        
-    except Exception as e:
-        print(f"Ошибка при показе статистики рефералов: {e}")
-        await message.answer("❌ Ошибка")
+# ==================== ВСПОМОГАТЕЛЬНЫЕ ОБРАБОТЧИКИ ====================
 
 @dp.callback_query(F.data == 'no_action')
 async def handle_no_action(callback: CallbackQuery):
-    """Обработка неактивных кнопок (номер страницы)"""
+    """Обработка неактивных кнопок"""
     await callback.answer()
 
 @dp.callback_query(F.data == 'cancel')
@@ -3597,9 +3851,48 @@ async def handle_unknown_text(message: Message, state: FSMContext):
                 reply_markup=main_menu_kb(message.from_user.id)
             )
 
+# ==================== МИГРАЦИЯ ПРИ ЗАПУСКЕ ====================
 
-# Запускаем миграцию при старте
+@dp.message(Command("migrate_ref"))
+async def handle_migrate_ref(message: Message):
+    """Команда для принудительной миграции реферальных кодов (только для админов)"""
+    try:
+        if message.from_user.id not in config.ADMIN_IDS:
+            await message.answer("⛔ У вас нет прав администратора")
+            return
+        
+        await message.answer("🔄 Начинаю миграцию данных...")
+        
+        migrated_count = 0
+        for user_id, user_data in db.users.items():
+            if 'referral_code' not in user_data or not user_data.get('referral_code'):
+                user_data['referral_code'] = db._generate_referral_code(user_id)
+                migrated_count += 1
+            
+            fields_to_add = {
+                'referred_by': None,
+                'referrals': [],
+                'qualified_referrals': 0,
+                'available_rewards': 0,
+                'used_rewards': 0
+            }
+            
+            for field, value in fields_to_add.items():
+                if field not in user_data:
+                    user_data[field] = value
+        
+        if migrated_count > 0:
+            db.save_users_data()
+            await message.answer(f"✅ Миграция завершена. Добавлены реферальные коды для {migrated_count} пользователей")
+        else:
+            await message.answer("✅ Все пользователи уже имеют реферальные коды")
+            
+    except Exception as e:
+        await message.answer(f"❌ Ошибка при миграции: {e}")
+        print(f"Ошибка в migrate_ref: {e}")
+
 async def run_migration():
+    """Запуск миграции при старте"""
     await migrate_existing_users()
 
 # ==================== ЗАПУСК БОТА ====================
@@ -3607,14 +3900,17 @@ async def run_migration():
 async def main():
     """Основная функция запуска бота"""
     
+    # Запускаем миграцию
+    await run_migration()
+    
     startup_info = f"""
-{'=' * 50}
-🤖 БОТ ЗАПУЩЕН
-{'=' * 50}
+{'=' * 60}
+🤖 БОТ ДЛЯ ПРОДАЖИ АККАУНТОВ ЗАПУЩЕН
+{'=' * 60}
 
 📊 Загруженные данные:
 • 📁 Категорий: {len(db.categories)}
-• 📦 Товаров: {len(db.products)}
+• 📦 Аккаунтов: {len(db.products)}
 • 👥 Пользователей: {len(db.users)}
 • 💳 Транзакций: {len(db.transactions)}
 • ⏳ Ожидающих заказов: {len(db.pending_orders)}
@@ -3622,32 +3918,46 @@ async def main():
 
 ⚙️ Конфигурация:
 • 👨‍💼 Администраторы: {config.ADMIN_IDS}
-• 💳 Оплата: Только Ozon (СБП/Карта)
+• 💳 Способы оплаты: 
+  - 💳 СБП (Любой банк)
+  - 💰 ЮMoney
+  - ₿ USDT (TRC-20)
+  - 💎 TON Coin
 • 📢 Канал подписки: {config.REQUIRED_CHANNEL}
-• 🎁 Реферальная программа: {'Включена' if Config.REFERRAL_CONFIG['enabled'] else 'Выключена'}
+• 🎁 Реферальная программа: {'✅ Включена' if Config.REFERRAL_CONFIG['enabled'] else '❌ Выключена'}
 
 🎉 НОВЫЕ ФУНКЦИИ:
-• 🛍️ Корзина для покупки нескольких товаров
-• 📢 Проверка подписки на канал
+• 📱 Удобный выбор количества аккаунтов (1,2,3,5,10 или свое)
+• 💳 Множество способов оплаты с реквизитами
+• 🛍️ Корзина для покупки нескольких аккаунтов
 • 🎁 Реферальная программа с наградами
+• 🔍 Улучшенный просмотр аккаунтов с эмодзи
 
-{'=' * 50}
+{'=' * 60}
 ✅ Бот готов к работе!
 ✅ Подписка на канал обязательна!
 ✅ Реферальная программа активна!
-{'=' * 50}
+{'=' * 60}
 """
     print(startup_info)
     
     try:
+        # Удаляем webhook если есть
+        await bot.delete_webhook(drop_pending_updates=True)
+        # Запускаем поллинг
         await dp.start_polling(bot, skip_updates=True)
     except KeyboardInterrupt:
         print("\n\n🛑 Бот остановлен пользователем")
     except Exception as e:
         print(f"❌ Критическая ошибка при запуске бота: {e}")
+        import traceback
+        traceback.print_exc()
     finally:
+        # Сохраняем данные перед выходом
         cart_manager.save_carts()
         print("✅ Данные корзины сохранены")
+        db.save_users_data()
+        print("✅ Данные пользователей сохранены")
         await bot.session.close()
         print("✅ Сессия бота закрыта")
 
