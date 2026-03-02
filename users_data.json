@@ -54,10 +54,10 @@
     },
     "5568154436": {
       "balance": 0.0,
-      "total_spent": 188.75,
-      "total_orders": 2,
+      "total_spent": 288.75,
+      "total_orders": 4,
       "registration_date": "2026-01-24T21:08:31.612725",
-      "last_activity": "2026-02-11T09:38:11.534001",
+      "last_activity": "2026-03-02T17:22:55.683598",
       "is_subscribed": true,
       "subscription_checked_at": "2026-02-21T18:43:26.943868",
       "referral_code": "7FFA95D8",
@@ -2131,7 +2131,7 @@
       "available_rewards": 0,
       "used_rewards": 0,
       "is_subscribed": true,
-      "subscription_checked_at": "2026-03-02T13:50:36.434089"
+      "subscription_checked_at": "2026-03-02T18:54:04.282074"
     },
     "6643538524": {
       "total_spent": 40.0,
@@ -4274,6 +4274,104 @@
       "used_rewards": 0,
       "is_subscribed": true,
       "subscription_checked_at": "2026-03-02T13:50:36.252257"
+    },
+    "1054140912": {
+      "total_spent": 0.0,
+      "total_orders": 0,
+      "registration_date": "2026-03-02T16:05:57.089333",
+      "last_activity": "2026-03-02T16:05:57.089349",
+      "referral_code": "6BC0ABC3",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0,
+      "is_subscribed": true,
+      "subscription_checked_at": "2026-03-02T16:05:57.099028"
+    },
+    "2038798627": {
+      "total_spent": 0.0,
+      "total_orders": 0,
+      "registration_date": "2026-03-02T16:29:13.478600",
+      "last_activity": "2026-03-02T16:29:13.478609",
+      "referral_code": "82B2CE10",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0,
+      "is_subscribed": true,
+      "subscription_checked_at": "2026-03-02T16:29:13.487882"
+    },
+    "7101059108": {
+      "total_spent": 0.0,
+      "total_orders": 0,
+      "registration_date": "2026-03-02T16:47:03.082831",
+      "last_activity": "2026-03-02T16:47:03.082842",
+      "referral_code": "220FD12F",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0,
+      "is_subscribed": true,
+      "subscription_checked_at": "2026-03-02T16:47:03.099999"
+    },
+    "7726363050": {
+      "total_spent": 0.0,
+      "total_orders": 0,
+      "registration_date": "2026-03-02T17:15:19.429041",
+      "last_activity": "2026-03-02T17:15:19.429052",
+      "referral_code": "692CFA39",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0,
+      "is_subscribed": true,
+      "subscription_checked_at": "2026-03-02T17:15:19.439220"
+    },
+    "537221906": {
+      "total_spent": 0.0,
+      "total_orders": 0,
+      "registration_date": "2026-03-02T18:16:34.632541",
+      "last_activity": "2026-03-02T18:16:34.632549",
+      "referral_code": "16A04381",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0,
+      "is_subscribed": true,
+      "subscription_checked_at": "2026-03-02T18:16:34.642226"
+    },
+    "1132517768": {
+      "total_spent": 300.0,
+      "total_orders": 1,
+      "registration_date": "2026-03-02T18:18:05.640138",
+      "last_activity": "2026-03-02T18:29:57.910684",
+      "referral_code": "23B70BBD",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0,
+      "is_subscribed": true,
+      "subscription_checked_at": "2026-03-02T18:18:05.649789"
+    },
+    "1407279796": {
+      "total_spent": 70.0,
+      "total_orders": 1,
+      "registration_date": "2026-03-02T18:54:04.155962",
+      "last_activity": "2026-03-02T19:00:33.571564",
+      "referral_code": "B01DE287",
+      "referred_by": null,
+      "referrals": [],
+      "qualified_referrals": 0,
+      "available_rewards": 0,
+      "used_rewards": 0,
+      "is_subscribed": true,
+      "subscription_checked_at": "2026-03-02T18:54:04.167632"
     }
   },
   "transactions": [
@@ -5848,6 +5946,38 @@
       "amount": 40.0,
       "description": "Оплата товара",
       "date": "2026-03-02T11:31:38.710671"
+    },
+    {
+      "id": 195,
+      "user_id": 5568154436,
+      "type": "purchase",
+      "amount": 60.0,
+      "description": "Оплата товара",
+      "date": "2026-03-02T16:17:51.070450"
+    },
+    {
+      "id": 196,
+      "user_id": 5568154436,
+      "type": "purchase",
+      "amount": 40.0,
+      "description": "Оплата товара",
+      "date": "2026-03-02T17:22:55.683611"
+    },
+    {
+      "id": 197,
+      "user_id": 1132517768,
+      "type": "purchase",
+      "amount": 300.0,
+      "description": "Оплата товара",
+      "date": "2026-03-02T18:29:57.910701"
+    },
+    {
+      "id": 198,
+      "user_id": 1407279796,
+      "type": "purchase",
+      "amount": 70.0,
+      "description": "Оплата товара",
+      "date": "2026-03-02T19:00:33.571577"
     }
   ],
   "pending_orders": {
@@ -5860,6 +5990,19 @@
       "product_price": 40.0,
       "payment_method": "Ozon (СБП/Карта)",
       "date": "2026-02-22T20:31:15.442046",
+      "has_username": true
+    },
+    "ACC_5568154436_1772472175": {
+      "user_id": 5568154436,
+      "username": "koliin98",
+      "order_id": "ACC_5568154436_1772472175",
+      "total": 40.0,
+      "product_name": "Телеграм | Мьянма (Бирма) +95",
+      "product_price": 40.0,
+      "quantity": 1,
+      "payment_method": "sbp",
+      "payment_name": "СБП (Любой банк)",
+      "date": "2026-03-02T17:22:55.202168",
       "has_username": true
     }
   }
