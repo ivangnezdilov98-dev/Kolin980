@@ -847,7 +847,7 @@ def categories_kb() -> InlineKeyboardMarkup:
     )
     return builder.as_markup()
 
-def products_kb(category_id: int, page: int = 0, items_per_page: int = 5) -> InlineKeyboardMarkup:
+def products_kb(category_id: int, page: int = 0, items_per_page: int = 20) -> InlineKeyboardMarkup:
     """Аккаунты в категории с пагинацией"""
     builder = InlineKeyboardBuilder()
     products = db.get_products_by_category(category_id)
@@ -3963,3 +3963,4 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+
