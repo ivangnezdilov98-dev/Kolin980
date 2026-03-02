@@ -37,25 +37,25 @@ class Config:
         "sbp": {
             "name": "💳 СБП (Любой банк)",
             "phone_number": "+79225739192",
-            "bank": "Т-Банк, Озон, Альфа",
+            "bank": "Т-Банк",
             "owner": "Иван Г.",
             "emoji": "💳"
         },
         "yoomoney": {
             "name": "💰 ЮMoney",
-            "account": "4100116710817606",
+            "account": "410011234567890",
             "owner": "Иван Г.",
             "emoji": "💰"
         },
         "usdt": {
             "name": "₿ USDT (TRC-20)",
-            "address": "TXxhbcAZ7yXBTpXt5q5Vbfq8q1AGuscMeu",
+            "address": "TX7q8Xx9yZ5rP2mN3kL6jH4gF5dS8aB2cV",
             "network": "TRC-20",
             "emoji": "₿"
         },
         "ton": {
             "name": "💎 TON Coin",
-            "address": "UQCXHgnPS5zY4WHCRheNR3jUx_N9cW5-gBrOMOnNrMsa9Dsd",
+            "address": "UQDJK1h2g3F4n5M6k7L8p9Q0w1E2r3Y4u5I6",
             "emoji": "💎"
         }
     }
@@ -2294,7 +2294,8 @@ async def _process_single_purchase_screenshot(message: Message, data: dict, file
 Пожалуйста, обратитесь к администратору: @koliin98
 """
             await message.answer(text=error_text, reply_markup=main_menu_kb(user_id))
-            return
+            await state.clear()  # Очищаем состояние
+            return  # Выходим из функции, не продолжая выполнение
         
         db.update_user_stats(user_id, total_amount)
         
@@ -2311,7 +2312,7 @@ async def _process_single_purchase_screenshot(message: Message, data: dict, file
         
         payment_names = {
             "sbp": "СБП (Любой банк)",
-            "yoomoney": "ЮMoney",
+            "yoomoney": "ЮMoney", 
             "usdt": "USDT (TRC-20)",
             "ton": "TON Coin"
         }
@@ -2334,6 +2335,7 @@ async def _process_single_purchase_screenshot(message: Message, data: dict, file
         
     except Exception as e:
         print(f"❌ Ошибка при обработке скриншота: {e}")
+        # Убираем дублирование - отправляем только одно сообщение об ошибке
         await message.answer(
             text="❌ Ошибка при обработке заказа. Обратитесь к администратору.",
             reply_markup=main_menu_kb(message.from_user.id)
@@ -2376,7 +2378,8 @@ async def _process_cart_purchase_screenshot(message: Message, data: dict, file_i
 Пожалуйста, обратитесь к администратору: @koliin98
 """
             await message.answer(text=error_text, reply_markup=main_menu_kb(user_id))
-            return
+            await state.clear()  # Очищаем состояние
+            return  # Выходим из функции, не продолжая выполнение
         
         total_amount = cart_total.get('total_amount', 0)
         db.update_user_stats(user_id, total_amount)
@@ -2432,6 +2435,7 @@ async def _process_cart_purchase_screenshot(message: Message, data: dict, file_i
         
     except Exception as e:
         print(f"❌ Ошибка при обработке скриншота корзины: {e}")
+        # Убираем дублирование - отправляем только одно сообщение об ошибке
         await message.answer(
             text="❌ Ошибка при обработке заказа. Обратитесь к администратору.",
             reply_markup=main_menu_kb(message.from_user.id)
@@ -3963,5 +3967,3 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
-
-
