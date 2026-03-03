@@ -37,7 +37,7 @@ class Config:
         "sbp": {
             "name": "💳 СБП (Любой банк)",
             "phone_number": "+79225739192",
-            "bank": "Озон, Альфа, Втб",
+            "bank": "Озон, Альфа, ВТБ",
             "owner": "Иван Г.",
             "emoji": "💳"
         },
@@ -1194,7 +1194,7 @@ async def handle_msg_command(message: Message, state: FSMContext):
         await message.answer("❌ Ошибка при отправке сообщения")
 
 # ==================== ОСНОВНЫЕ ОБРАБОТЧИКИ ====================
-@dp.callback_query(F.data == 'main_menu')
+ == 'main_menu')
 async def handle_main_menu(callback: CallbackQuery, state: FSMContext):
     """Обработка перехода в главное меню"""
     try:
@@ -1208,7 +1208,7 @@ async def handle_main_menu(callback: CallbackQuery, state: FSMContext):
         await callback.answer("Произошла ошибка", show_alert=True)
     await callback.answer()
 
-@dp.callback_query(F.data == 'view_categories')
+ == 'view_categories')
 async def handle_view_categories(callback: CallbackQuery):
     """Показать список категорий аккаунтов"""
     try:
@@ -1228,7 +1228,7 @@ async def handle_view_categories(callback: CallbackQuery):
         await callback.answer("Ошибка загрузки категорий", show_alert=True)
     await callback.answer()
 
-@dp.callback_query(F.data.startswith('category_'))
+.startswith('category_'))
 async def handle_category_products(callback: CallbackQuery):
     """Показать аккаунты в выбранной категории"""
     try:
@@ -1256,7 +1256,7 @@ async def handle_category_products(callback: CallbackQuery):
         await callback.answer("Ошибка загрузки аккаунтов", show_alert=True)
     await callback.answer()
 
-@dp.callback_query(F.data.startswith('product_'))
+.startswith('product_'))
 async def handle_product_detail(callback: CallbackQuery, state: FSMContext):
     """Показать детали аккаунта"""
     try:
@@ -1309,7 +1309,7 @@ async def handle_product_detail(callback: CallbackQuery, state: FSMContext):
     await callback.answer()
 
 # ==================== ОБРАБОТЧИКИ ВЫБОРА КОЛИЧЕСТВА ====================
-@dp.callback_query(F.data.startswith('qty_'))
+.startswith('qty_'))
 async def handle_quantity_selection(callback: CallbackQuery, state: FSMContext):
     """Обработка выбора количества аккаунтов"""
     try:
@@ -1426,7 +1426,7 @@ async def handle_custom_quantity(message: Message, state: FSMContext):
         await state.clear()
 
 # ==================== ОБРАБОТЧИКИ ВЫБОРА ОПЛАТЫ ====================
-@dp.callback_query(F.data.startswith('pay_'))
+.startswith('pay_'))
 async def handle_payment_method(callback: CallbackQuery, state: FSMContext):
     """Обработка выбора способа оплаты"""
     try:
@@ -1533,7 +1533,7 @@ async def handle_payment_method(callback: CallbackQuery, state: FSMContext):
     await callback.answer()
 
 # ==================== ОБРАБОТЧИКИ КОРЗИНЫ ====================
-@dp.callback_query(F.data == 'view_cart')
+ == 'view_cart')
 async def handle_view_cart(callback: CallbackQuery, state: FSMContext):
     """Показать корзину пользователя"""
     try:
@@ -1580,7 +1580,7 @@ async def handle_view_cart(callback: CallbackQuery, state: FSMContext):
         await callback.answer("Ошибка при загрузке корзины", show_alert=True)
     await callback.answer()
 
-@dp.callback_query(F.data.startswith('cart_remove_'))
+.startswith('cart_remove_'))
 async def handle_cart_remove(callback: CallbackQuery):
     """Удалить товар из корзины"""
     try:
@@ -1632,7 +1632,7 @@ async def handle_cart_remove(callback: CallbackQuery):
         await callback.answer("❌ Ошибка", show_alert=True)
     await callback.answer()
 
-@dp.callback_query(F.data == 'cart_clear')
+ == 'cart_clear')
 async def handle_cart_clear(callback: CallbackQuery):
     """Очистить корзину"""
     try:
@@ -1653,7 +1653,7 @@ async def handle_cart_clear(callback: CallbackQuery):
         await callback.answer("❌ Ошибка", show_alert=True)
     await callback.answer()
 
-@dp.callback_query(F.data == 'cart_checkout')
+ == 'cart_checkout')
 async def handle_cart_checkout(callback: CallbackQuery, state: FSMContext):
     """Оформление заказа из корзины"""
     try:
@@ -1740,7 +1740,7 @@ async def handle_cart_checkout(callback: CallbackQuery, state: FSMContext):
         await state.clear()
     await callback.answer()
 
-@dp.callback_query(F.data.startswith('cart_pay_'))
+.startswith('cart_pay_'))
 async def handle_cart_payment_method(callback: CallbackQuery, state: FSMContext):
     """Обработка выбора способа оплаты для корзины"""
     try:
@@ -2186,7 +2186,7 @@ async def send_cart_to_order_channel(order_data: Dict, screenshot_file_id: str =
         return None
 
 # ==================== ОБРАБОТЧИКИ РЕФЕРАЛОВ ====================
-@dp.callback_query(F.data == 'referral_info')
+ == 'referral_info')
 async def handle_referral_info(callback: CallbackQuery):
     """Показывает информацию о реферальной программе"""
     try:
@@ -2209,7 +2209,7 @@ async def handle_referral_info(callback: CallbackQuery):
         await callback.answer("Ошибка", show_alert=True)
     await callback.answer()
 
-@dp.callback_query(F.data == 'share_referral')
+ == 'share_referral')
 async def handle_share_referral(callback: CallbackQuery):
     """Поделиться реферальной ссылкой"""
     try:
@@ -2241,7 +2241,7 @@ async def handle_share_referral(callback: CallbackQuery):
     await callback.answer()
 
 # ==================== ОБРАБОТЧИКИ ПРОВЕРКИ ПОДПИСКИ ====================
-@dp.callback_query(F.data == 'check_subscription')
+ == 'check_subscription')
 async def handle_check_subscription(callback: CallbackQuery, state: FSMContext):
     """Проверяет подписку пользователя"""
     try:
@@ -2280,7 +2280,7 @@ async def handle_check_subscription(callback: CallbackQuery, state: FSMContext):
         await callback.answer("Ошибка при проверке", show_alert=True)
     await callback.answer()
 
-@dp.callback_query(F.data == 'force_start')
+ == 'force_start')
 async def handle_force_start(callback: CallbackQuery, state: FSMContext):
     """Принудительный запуск бота с проверкой username"""
     try:
@@ -2338,7 +2338,7 @@ async def handle_force_start(callback: CallbackQuery, state: FSMContext):
     await callback.answer()
 
 # ==================== ОБРАБОТЧИКИ ПОДДЕРЖКИ ====================
-@dp.callback_query(F.data == 'support')
+ == 'support')
 async def handle_support(callback: CallbackQuery):
     """Обработка кнопки поддержки"""
     try:
@@ -2384,7 +2384,7 @@ async def handle_support(callback: CallbackQuery):
     await callback.answer()
 
 # ==================== АДМИН-ПАНЕЛЬ ====================
-@dp.callback_query(F.data == 'admin_panel')
+ == 'admin_panel')
 async def handle_admin_panel(callback: CallbackQuery):
     """Показать админ-панель"""
     try:
@@ -2418,7 +2418,7 @@ async def handle_admin_panel(callback: CallbackQuery):
         await callback.answer("Ошибка", show_alert=True)
     await callback.answer()
 
-@dp.callback_query(F.data == 'admin_pending')
+ == 'admin_pending')
 async def handle_admin_pending(callback: CallbackQuery):
     """Показать ожидающие заявки"""
     try:
@@ -2463,7 +2463,7 @@ async def handle_admin_pending(callback: CallbackQuery):
     await callback.answer()
 
 # ==================== ОБРАБОТЧИКИ ПОДТВЕРЖДЕНИЯ АДМИНИСТРАТОРОМ ====================
-@dp.callback_query(F.data.startswith('confirm_order_'))
+.startswith('confirm_order_'))
 async def handle_confirm_order(callback: CallbackQuery):
     """Подтвердить заказ администратором"""
     try:
@@ -2525,7 +2525,7 @@ async def handle_confirm_order(callback: CallbackQuery):
         print(f"Ошибка при подтверждении заказа: {e}")
         await callback.answer("❌ Ошибка при подтверждении", show_alert=True)
 
-@dp.callback_query(F.data.startswith('reject_order_'))
+.startswith('reject_order_'))
 async def handle_reject_order(callback: CallbackQuery):
     """Отклонить заказ администратором"""
     try:
@@ -2590,7 +2590,7 @@ async def handle_reject_order(callback: CallbackQuery):
         print(f"Ошибка при отклонении заказа: {e}")
         await callback.answer("❌ Ошибка при отклонении", show_alert=True)
 
-@dp.callback_query(F.data.startswith('no_username_'))
+.startswith('no_username_'))
 async def handle_no_username_warning(callback: CallbackQuery):
     """Обработка предупреждения о отсутствии username"""
     try:
@@ -2767,7 +2767,7 @@ async def handle_stats_command(message: Message):
         await message.answer("❌ Ошибка при загрузке статистики")
 
 # ==================== ОБРАБОТЧИКИ АДМИН-ПАНЕЛИ ====================
-@dp.callback_query(F.data == 'admin_users')
+ == 'admin_users')
 async def handle_admin_users(callback: CallbackQuery):
     """Показать пользователей"""
     try:
@@ -2819,7 +2819,7 @@ async def handle_admin_users(callback: CallbackQuery):
         await callback.answer("Ошибка", show_alert=True)
     await callback.answer()
 
-@dp.callback_query(F.data == 'admin_stats')
+ == 'admin_stats')
 async def handle_admin_stats(callback: CallbackQuery):
     """Показать статистику"""
     try:
@@ -2888,7 +2888,7 @@ async def handle_admin_stats(callback: CallbackQuery):
         await callback.answer("Ошибка", show_alert=True)
     await callback.answer()
 
-@dp.callback_query(F.data == 'admin_products')
+ == 'admin_products')
 async def handle_admin_products(callback: CallbackQuery):
     """Управление аккаунтами"""
     try:
@@ -2906,7 +2906,7 @@ async def handle_admin_products(callback: CallbackQuery):
         await callback.answer("Ошибка", show_alert=True)
     await callback.answer()
 
-@dp.callback_query(F.data == 'admin_categories')
+ == 'admin_categories')
 async def handle_admin_categories(callback: CallbackQuery):
     """Управление категориями"""
     try:
@@ -2924,7 +2924,7 @@ async def handle_admin_categories(callback: CallbackQuery):
         await callback.answer("Ошибка", show_alert=True)
     await callback.answer()
 
-@dp.callback_query(F.data == 'admin_referral')
+ == 'admin_referral')
 async def handle_admin_referral(callback: CallbackQuery):
     """Управление реферальной программой"""
     try:
@@ -2965,7 +2965,7 @@ async def handle_admin_referral(callback: CallbackQuery):
         await callback.answer("Ошибка", show_alert=True)
     await callback.answer()
 
-@dp.callback_query(F.data == 'admin_referral_toggle')
+ == 'admin_referral_toggle')
 async def handle_admin_referral_toggle(callback: CallbackQuery):
     """Включение/выключение реферальной программы"""
     try:
@@ -2982,7 +2982,7 @@ async def handle_admin_referral_toggle(callback: CallbackQuery):
         print(f"Ошибка: {e}")
         await callback.answer("Ошибка", show_alert=True)
 
-@dp.callback_query(F.data == 'admin_referral_amount')
+ == 'admin_referral_amount')
 async def handle_admin_referral_amount(callback: CallbackQuery, state: FSMContext):
     """Изменение минимальной суммы для реферальной программы"""
     try:
@@ -3053,7 +3053,7 @@ async def handle_new_referral_amount(message: Message, state: FSMContext):
         await message.answer("❌ Ошибка", reply_markup=admin_panel_kb())
         await state.clear()
 
-@dp.callback_query(F.data == 'admin_referral_reward')
+ == 'admin_referral_reward')
 async def handle_admin_referral_reward(callback: CallbackQuery, state: FSMContext):
     """Изменение описания награды"""
     try:
@@ -3114,7 +3114,7 @@ async def handle_new_referral_reward(message: Message, state: FSMContext):
         await message.answer("❌ Ошибка", reply_markup=admin_panel_kb())
         await state.clear()
 
-@dp.callback_query(F.data == 'admin_referral_stats')
+ == 'admin_referral_stats')
 async def handle_admin_referral_stats(callback: CallbackQuery):
     """Детальная статистика рефералов"""
     try:
@@ -3161,7 +3161,7 @@ async def handle_admin_referral_stats(callback: CallbackQuery):
         await callback.answer("Ошибка", show_alert=True)
     await callback.answer()
 
-@dp.callback_query(F.data == 'admin_list_products')
+ == 'admin_list_products')
 async def handle_admin_list_products(callback: CallbackQuery):
     """Список аккаунтов"""
     try:
@@ -3209,7 +3209,7 @@ async def handle_admin_list_products(callback: CallbackQuery):
         await callback.answer("Ошибка", show_alert=True)
     await callback.answer()
 
-@dp.callback_query(F.data == 'admin_list_categories')
+ == 'admin_list_categories')
 async def handle_admin_list_categories(callback: CallbackQuery):
     """Список категорий"""
     try:
@@ -3240,7 +3240,7 @@ async def handle_admin_list_categories(callback: CallbackQuery):
         await callback.answer("Ошибка", show_alert=True)
     await callback.answer()
 
-@dp.callback_query(F.data == 'admin_add_category')
+ == 'admin_add_category')
 async def handle_admin_add_category(callback: CallbackQuery):
     """Добавление категории через меню"""
     try:
@@ -3264,7 +3264,7 @@ async def handle_admin_add_category(callback: CallbackQuery):
         await callback.answer("Ошибка", show_alert=True)
     await callback.answer()
 
-@dp.callback_query(F.data == 'admin_add_product')
+ == 'admin_add_product')
 async def handle_admin_add_product(callback: CallbackQuery, state: FSMContext):
     """Добавление аккаунта через меню"""
     try:
@@ -3303,7 +3303,7 @@ async def handle_admin_add_product(callback: CallbackQuery, state: FSMContext):
         await state.clear()
     await callback.answer()
 
-@dp.callback_query(F.data.startswith('admin_add_product_cat_'))
+.startswith('admin_add_product_cat_'))
 async def handle_admin_product_category(callback: CallbackQuery, state: FSMContext):
     """Обработка выбора категории для аккаунта"""
     try:
@@ -3436,7 +3436,7 @@ async def handle_product_description(message: Message, state: FSMContext):
         )
         await state.clear()
 
-@dp.callback_query(F.data == 'admin_delete_product')
+ == 'admin_delete_product')
 async def handle_admin_delete_product(callback: CallbackQuery, state: FSMContext):
     """Удаление аккаунта"""
     try:
@@ -3489,7 +3489,7 @@ async def handle_admin_delete_product(callback: CallbackQuery, state: FSMContext
         await callback.answer("Ошибка", show_alert=True)
     await callback.answer()
 
-@dp.callback_query(F.data.startswith('admin_delete_product_confirm_'))
+.startswith('admin_delete_product_confirm_'))
 async def handle_admin_delete_product_confirm(callback: CallbackQuery):
     """Подтверждение удаления аккаунта"""
     try:
@@ -3531,7 +3531,7 @@ async def handle_admin_delete_product_confirm(callback: CallbackQuery):
         await callback.answer("Ошибка", show_alert=True)
     await callback.answer()
 
-@dp.callback_query(F.data.startswith('admin_delete_product_final_'))
+.startswith('admin_delete_product_final_'))
 async def handle_admin_delete_product_final(callback: CallbackQuery):
     """Финальное удаление аккаунта"""
     try:
@@ -3575,7 +3575,7 @@ async def handle_admin_delete_product_final(callback: CallbackQuery):
     await callback.answer()
 
 # ==================== ОБРАБОТЧИКИ ПАГИНАЦИИ ====================
-@dp.callback_query(F.data.startswith('page_'))
+.startswith('page_'))
 async def handle_page_change(callback: CallbackQuery):
     """Обработка смены страницы"""
     try:
@@ -3610,12 +3610,12 @@ async def handle_page_change(callback: CallbackQuery):
     await callback.answer()
 
 # ==================== ВСПОМОГАТЕЛЬНЫЕ ОБРАБОТЧИКИ ====================
-@dp.callback_query(F.data == 'no_action')
+ == 'no_action')
 async def handle_no_action(callback: CallbackQuery):
     """Обработка неактивных кнопок"""
     await callback.answer()
 
-@dp.callback_query(F.data == 'cancel')
+ == 'cancel')
 async def handle_cancel(callback: CallbackQuery, state: FSMContext):
     """Отменить текущую операцию"""
     try:
@@ -3627,6 +3627,350 @@ async def handle_cancel(callback: CallbackQuery, state: FSMContext):
     except Exception as e:
         print(f"Ошибка при отмене операции: {e}")
         await callback.answer("Ошибка при отмене", show_alert=True)
+    await callback.answer()
+
+# ==================== ОБРАБОТЧИКИ ОТПРАВКИ СООБЩЕНИЙ ====================
+
+ == 'admin_messaging')
+async def handle_admin_messaging(callback: CallbackQuery):
+    """Показать меню отправки сообщений"""
+    try:
+        if callback.from_user.id not in config.ADMIN_IDS:
+            await callback.answer("⛔ Нет доступа", show_alert=True)
+            return
+        
+        await callback.message.edit_text(
+            text="📨 **Отправка сообщений пользователям**\n\nВыберите способ отправки:",
+            parse_mode='Markdown',
+            reply_markup=admin_messaging_kb()
+        )
+    except Exception as e:
+        print(f"Ошибка при открытии меню сообщений: {e}")
+        await callback.answer("Ошибка", show_alert=True)
+    await callback.answer()
+
+ == 'admin_msg_by_id')
+async def handle_admin_msg_by_id(callback: CallbackQuery, state: FSMContext):
+    """Начать отправку сообщения по ID пользователя"""
+    try:
+        if callback.from_user.id not in config.ADMIN_IDS:
+            await callback.answer("⛔ Нет доступа", show_alert=True)
+            return
+        
+        await state.set_state(AdminMessageStates.waiting_for_user_input)
+        await state.update_data(msg_type='by_id')
+        
+        builder = InlineKeyboardBuilder()
+        builder.row(InlineKeyboardButton(text='🔙 Назад', callback_data='admin_messaging'))
+        
+        await callback.message.edit_text(
+            text="📨 **Отправка сообщения по ID**\n\n"
+                 "Введите ID пользователя (только цифры):\n"
+                 "Например: `123456789`",
+            parse_mode='Markdown',
+            reply_markup=builder.as_markup()
+        )
+    except Exception as e:
+        print(f"Ошибка: {e}")
+        await callback.answer("Ошибка", show_alert=True)
+    await callback.answer()
+
+ == 'admin_msg_by_username')
+async def handle_admin_msg_by_username(callback: CallbackQuery, state: FSMContext):
+    """Начать отправку сообщения по username"""
+    try:
+        if callback.from_user.id not in config.ADMIN_IDS:
+            await callback.answer("⛔ Нет доступа", show_alert=True)
+            return
+        
+        await state.set_state(AdminMessageStates.waiting_for_user_input)
+        await state.update_data(msg_type='by_username')
+        
+        builder = InlineKeyboardBuilder()
+        builder.row(InlineKeyboardButton(text='🔙 Назад', callback_data='admin_messaging'))
+        
+        await callback.message.edit_text(
+            text="📨 **Отправка сообщения по Username**\n\n"
+                 "Введите username пользователя (с @ или без):\n"
+                 "Например: `@username` или `username`",
+            parse_mode='Markdown',
+            reply_markup=builder.as_markup()
+        )
+    except Exception as e:
+        print(f"Ошибка: {e}")
+        await callback.answer("Ошибка", show_alert=True)
+    await callback.answer()
+
+@dp.message(AdminMessageStates.waiting_for_user_input)
+async def handle_user_input(message: Message, state: FSMContext):
+    """Обработка ввода ID или username пользователя"""
+    try:
+        if message.from_user.id not in config.ADMIN_IDS:
+            await message.answer("⛔ У вас нет прав администратора")
+            await state.clear()
+            return
+        
+        data = await state.get_data()
+        msg_type = data.get('msg_type')
+        
+        user_input = message.text.strip()
+        
+        # Проверяем корректность ввода
+        if msg_type == 'by_id':
+            try:
+                target_id = int(user_input)
+                await state.update_data(target_id=target_id, target_display=f"ID: {target_id}")
+            except ValueError:
+                builder = InlineKeyboardBuilder()
+                builder.row(InlineKeyboardButton(text='🔙 Назад', callback_data='admin_messaging'))
+                
+                await message.answer(
+                    "❌ Неверный формат! ID должен содержать только цифры.\n"
+                    "Попробуйте снова:",
+                    reply_markup=builder.as_markup()
+                )
+                return
+        else:  # by_username
+            # Убираем @ если есть
+            target_username = user_input.replace('@', '').strip()
+            if not target_username:
+                builder = InlineKeyboardBuilder()
+                builder.row(InlineKeyboardButton(text='🔙 Назад', callback_data='admin_messaging'))
+                
+                await message.answer(
+                    "❌ Username не может быть пустым!\nПопробуйте снова:",
+                    reply_markup=builder.as_markup()
+                )
+                return
+            
+            await state.update_data(target_username=target_username, target_display=f"@{target_username}")
+        
+        # Переходим к вводу текста сообщения
+        await state.set_state(AdminMessageStates.waiting_for_message_text)
+        
+        builder = InlineKeyboardBuilder()
+        builder.row(InlineKeyboardButton(text='❌ Отмена', callback_data='admin_messaging'))
+        
+        await message.answer(
+            text="📝 **Введите текст сообщения**\n\n"
+                 "Можно использовать Markdown для форматирования:\n"
+                 "• **жирный**\n"
+                 "• *курсив*\n"
+                 "• `код`",
+            parse_mode='Markdown',
+            reply_markup=builder.as_markup()
+        )
+    except Exception as e:
+        print(f"Ошибка: {e}")
+        await message.answer("❌ Ошибка при обработке ввода")
+        await state.clear()
+
+@dp.message(AdminMessageStates.waiting_for_message_text)
+async def handle_message_text(message: Message, state: FSMContext):
+    """Обработка ввода текста сообщения и отправка пользователю"""
+    try:
+        if message.from_user.id not in config.ADMIN_IDS:
+            await message.answer("⛔ У вас нет прав администратора")
+            await state.clear()
+            return
+        
+        data = await state.get_data()
+        msg_type = data.get('msg_type')
+        target_display = data.get('target_display')
+        
+        msg_text = message.text.strip()
+        
+        if not msg_text:
+            builder = InlineKeyboardBuilder()
+            builder.row(InlineKeyboardButton(text='❌ Отмена', callback_data='admin_messaging'))
+            
+            await message.answer(
+                "❌ Сообщение не может быть пустым!\nВведите текст сообщения:",
+                reply_markup=builder.as_markup()
+            )
+            return
+        
+        admin_name = message.from_user.username or message.from_user.full_name
+        full_text = f"📨 **Сообщение от администратора**\n\n{msg_text}"
+        
+        # Определяем получателя и отправляем
+        try:
+            if msg_type == 'by_id':
+                target_id = data.get('target_id')
+                chat_id = target_id
+                target_info = f"ID: {target_id}"
+            else:
+                target_username = data.get('target_username')
+                chat_id = f"@{target_username}"
+                target_info = f"@{target_username}"
+                target_id = None
+            
+            await bot.send_message(
+                chat_id=chat_id,
+                text=full_text,
+                parse_mode='Markdown'
+            )
+            
+            # Сохраняем в статистику
+            db.admin_messages.append({
+                'admin_id': message.from_user.id,
+                'admin_name': admin_name,
+                'target_id': target_id,
+                'target_username': target_username if msg_type == 'by_username' else None,
+                'timestamp': datetime.now().isoformat(),
+                'message_type': 'text',
+                'success': True
+            })
+            db.save_users_data()
+            
+            await message.answer(
+                text=f"✅ Сообщение успешно отправлено!\n"
+                     f"👤 Получатель: {target_info}",
+                reply_markup=admin_panel_kb()
+            )
+            
+            print(f"✅ Админ @{admin_name} отправил сообщение пользователю {target_info}")
+            
+        except Exception as e:
+            error_message = str(e)
+            if "chat not found" in error_message.lower():
+                user_error = "Пользователь не найден. Возможно, он никогда не запускал бота."
+            elif "bot was blocked" in error_message.lower():
+                user_error = "Пользователь заблокировал бота."
+            elif "user is deactivated" in error_message.lower():
+                user_error = "Аккаунт пользователя удален или деактивирован."
+            else:
+                user_error = error_message
+            
+            # Сохраняем ошибку в статистику
+            db.admin_messages.append({
+                'admin_id': message.from_user.id,
+                'admin_name': admin_name,
+                'target_id': target_id,
+                'target_username': target_username if msg_type == 'by_username' else None,
+                'timestamp': datetime.now().isoformat(),
+                'message_type': 'text',
+                'success': False,
+                'error': error_message
+            })
+            db.save_users_data()
+            
+            await message.answer(
+                text=f"❌ Не удалось отправить сообщение!\n"
+                     f"👤 Получатель: {target_info}\n"
+                     f"⚠️ Причина: {user_error}",
+                reply_markup=admin_panel_kb()
+            )
+        
+        await state.clear()
+        
+    except Exception as e:
+        print(f"Ошибка при отправке сообщения: {e}")
+        await message.answer("❌ Ошибка при отправке сообщения")
+        await state.clear()
+
+ == 'admin_msg_list_users')
+async def handle_admin_msg_list_users(callback: CallbackQuery):
+    """Показать список пользователей для быстрой отправки"""
+    try:
+        if callback.from_user.id not in config.ADMIN_IDS:
+            await callback.answer("⛔ Нет доступа", show_alert=True)
+            return
+        
+        users = db.users
+        if not users:
+            text = "📭 Пользователей пока нет"
+        else:
+            text = "👥 **Список пользователей для отправки:**\n\n"
+            
+            # Сортируем по последней активности
+            sorted_users = sorted(
+                users.items(),
+                key=lambda x: x[1].get('last_activity', '2000-01-01'),
+                reverse=True
+            )[:15]  # Показываем только 15 последних
+            
+            for user_id, user_data in sorted_users:
+                username = user_data.get('username', 'Нет username')
+                last_activity = datetime.fromisoformat(user_data.get('last_activity', '2000-01-01')).strftime('%d.%m.%Y')
+                total_orders = user_data.get('total_orders', 0)
+                
+                text += f"• **ID:** `{user_id}` | @{username}\n"
+                text += f"  📦 Заказов: {total_orders} | 📅 {last_activity}\n\n"
+        
+        builder = InlineKeyboardBuilder()
+        builder.row(
+            InlineKeyboardButton(text='📨 Отправить по ID', callback_data='admin_msg_by_id'),
+            InlineKeyboardButton(text='📨 Отправить по username', callback_data='admin_msg_by_username')
+        )
+        builder.row(InlineKeyboardButton(text='🔙 Назад', callback_data='admin_messaging'))
+        
+        await callback.message.edit_text(
+            text=text,
+            parse_mode='Markdown',
+            reply_markup=builder.as_markup()
+        )
+    except Exception as e:
+        print(f"Ошибка: {e}")
+        await callback.answer("Ошибка", show_alert=True)
+    await callback.answer()
+
+ == 'admin_msg_stats')
+async def handle_admin_msg_stats(callback: CallbackQuery):
+    """Показать статистику отправленных сообщений"""
+    try:
+        if callback.from_user.id not in config.ADMIN_IDS:
+            await callback.answer("⛔ Нет доступа", show_alert=True)
+            return
+        
+        total_messages = len(db.admin_messages)
+        successful = sum(1 for m in db.admin_messages if m.get('success', False))
+        failed = total_messages - successful
+        
+        # Статистика по администраторам
+        admin_stats = {}
+        for msg in db.admin_messages:
+            admin_name = msg.get('admin_name', 'Неизвестно')
+            if admin_name not in admin_stats:
+                admin_stats[admin_name] = {'total': 0, 'success': 0}
+            admin_stats[admin_name]['total'] += 1
+            if msg.get('success', False):
+                admin_stats[admin_name]['success'] += 1
+        
+        # Последние 10 сообщений
+        recent_messages = db.admin_messages[-10:] if db.admin_messages else []
+        
+        text = f"""📊 **СТАТИСТИКА ОТПРАВЛЕННЫХ СООБЩЕНИЙ**
+
+📨 **Всего отправлено:** {total_messages}
+✅ **Успешно:** {successful}
+❌ **Ошибок:** {failed}
+📈 **Успешность:** {(successful/total_messages*100):.1f}%""" if total_messages > 0 else "0%"
+
+        if admin_stats:
+            text += f"\n\n👨‍💼 **По администраторам:**"
+            for admin, stats in admin_stats.items():
+                text += f"\n• @{admin}: {stats['success']}/{stats['total']} успешно"
+        
+        if recent_messages:
+            text += f"\n\n🕐 **Последние отправки:**"
+            for msg in reversed(recent_messages):
+                date = datetime.fromisoformat(msg['timestamp']).strftime('%d.%m.%Y %H:%M')
+                target = msg.get('target_username', f"ID:{msg.get('target_id')}")
+                status = "✅" if msg.get('success') else "❌"
+                text += f"\n{status} {date} → @{target}"
+        
+        builder = InlineKeyboardBuilder()
+        builder.row(InlineKeyboardButton(text='🔙 Назад', callback_data='admin_messaging'))
+        
+        await callback.message.edit_text(
+            text=text,
+            parse_mode='Markdown',
+            reply_markup=builder.as_markup()
+        )
+    except Exception as e:
+        print(f"Ошибка: {e}")
+        await callback.answer("Ошибка", show_alert=True)
     await callback.answer()
 
 # ==================== МИГРАЦИЯ ПРИ ЗАПУСКЕ ====================
@@ -3770,4 +4114,3 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
-
