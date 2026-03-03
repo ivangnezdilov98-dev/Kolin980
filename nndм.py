@@ -37,25 +37,25 @@ class Config:
         "sbp": {
             "name": "💳 СБП (Любой банк)",
             "phone_number": "+79225739192",
-            "bank": "Т-Банк",
+            "bank": "Озон, Альфа, Втб",
             "owner": "Иван Г.",
             "emoji": "💳"
         },
         "yoomoney": {
             "name": "💰 ЮMoney",
-            "account": "410011234567890",
+            "account": "4100116710817606",
             "owner": "Иван Г.",
             "emoji": "💰"
         },
         "usdt": {
             "name": "₿ USDT (TRC-20)",
-            "address": "TX7q8Xx9yZ5rP2mN3kL6jH4gF5dS8aB2cV",
+            "address": "TXxhbcAZ7yXBTpXt5q5Vbfq8q1AGuscMeu",
             "network": "TRC-20",
             "emoji": "₿"
         },
         "ton": {
             "name": "💎 TON Coin",
-            "address": "UQDJK1h2g3F4n5M6k7L8p9Q0w1E2r3Y4u5I6",
+            "address": "UQCXHgnPS5zY4WHCRheNR3jUx_N9cW5-gBrOMOnNrMsa9Dsd",
             "emoji": "💎"
         }
     }
@@ -3770,3 +3770,4 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+
